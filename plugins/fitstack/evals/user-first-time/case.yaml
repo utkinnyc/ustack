@@ -1,7 +1,7 @@
 schema_version: "1.1"
 name: user-first-time
-description: A new user with logs and Strava but no AgentReferences. Setup runs from the answers in the prompt, then a workout is still given.
-tags: [user, setup, messy]
+description: A new user with logs and Strava but no AgentReferences. Setup runs from the answers in the prompt, drafts milestones without showing them, and the reply is still just a workout card.
+tags: [user, setup, card, messy]
 context:
   scaffold_script: setup.sh
 execution:
@@ -10,8 +10,8 @@ execution:
   allowed_tools: [Read, Glob, Grep, Skill, Agent]
   prompt: |
     Hey, I'm new to fitstack. My goals: finish a half marathon by April 2027, and get
-    stronger (barbell squat 155x5, no date). I use lb and km, and my week starts on Monday.
-    What should I do today?
+    stronger (barbell squat 155x5, no date). I use lb and km, my week starts on Monday,
+    and no texts please. What should I do today?
 graders:
   - name: setup-ran
     type: tool_used
@@ -22,19 +22,44 @@ graders:
     pattern: '^\s*\**TEST MODE'
   - name: would-write-all-files
     type: regex
-    pattern: '(?=[\s\S]*WOULD WRITE)(?=[\s\S]*config\.md)(?=[\s\S]*goals\.md)(?=[\s\S]*state\.jsonl)(?=[\s\S]*personal-rules\.md)'
+    pattern: '(?=[\s\S]*WOULD WRITE)(?=[\s\S]*config\.md)(?=[\s\S]*goals\.md)(?=[\s\S]*milestones\.md)(?=[\s\S]*state\.jsonl)(?=[\s\S]*personal-rules\.md)'
+  - name: milestones-are-draft
+    type: regex
+    pattern: 'status:\s*draft'
+  - name: texts-off
+    type: regex
+    pattern: 'text_plans:\s*never'
   - name: goals-from-prompt
     type: regex
     pattern: '(?=[\s\S]*half marathon)(?=[\s\S]*2027-04)(?=[\s\S]*155\s*[x×]\s*5)'
     flags: i
+  - name: card-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?card"'
+  - name: no-fluff-markers
+    type: regex
+    pattern: 'why this session|data notes|\(\s*last\b'
+    flags: i
+    match: not_contains
+  - name: reply-is-card
+    type: llm
+    criteria: |
+      Ignore a first line starting "TEST MODE" and a final "WOULD WRITE" section; they are
+      for testing. Judge only what is between them.
+      PASS if that part is only a workout card: a short title, numbered exercises or
+      segments with their targets, at most one line starting with ⚠, and (on a first run
+      only) one line about setup.
+      FAIL if it also has reasons, assumptions, data notes, warm-up or cool-down, last
+      session numbers, alternatives, goal or milestone status, or questions.
   - name: judge-first-run
     type: llm
     criteria: |
       PASS if all of these hold:
-      - It did not ask for the folder path, the units, the week start or the goals (all were given).
-      - Config, goals, state and personal rules are shown as files it would write.
-      - Milestones toward the half marathon are proposed and the user is asked to agree;
-        they are not presented as already written.
-      - Any baseline uses measured data only (e.g. longest run 7.42 km, squat 135x6 or 140x4).
-      - It still ends with a concrete workout for today.
+      - It did not ask for the folder path, units, week start, texts or goals (all were given).
+      - WOULD WRITE lists config, goals, a draft milestones file, state and personal rules.
+      - The milestones are not shown in the reply above WOULD WRITE.
+      - Any goal_progress baseline uses measured data only (e.g. longest run 7.42 km,
+        squat 135x6 or 140x4).
+      - The reply gives a concrete workout card for today.
       FAIL if any of these is missing, or it invents past plans or history.

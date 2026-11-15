@@ -36,7 +36,7 @@ section 2.
    - `distance_units`: from the Strava athlete profile, if Strava is available.
    - `weight_unit`: from the logs, if they state `lb` or `kg`.
    - `goals`, `milestones`, `state_log`, `personal_rules`: the default paths in config.
-   - `meal_photos` and `imessage_to`: `none`. Other skills ask for them when needed.
+   - `meal_photos`: `none`. `imessage_to` and `text_plans`: from the question below.
 
 3. **Ask one AskUserQuestion round**, skipping any question already answered by a file
    or by detection:
@@ -46,6 +46,9 @@ section 2.
    - **Weight unit**, if not detected: lb or kg.
    - **Distance units**, if not detected: metric or imperial.
    - **Week starts**: Monday or Sunday.
+   - **Texts**: "Text you each workout?" Options: "Yes (type your number in Other)" and
+     "No". A number → `imessage_to: <number>`, `text_plans: always`. No →
+     `imessage_to: none`, `text_plans: never`, and never ask again.
 
    If a chosen goal still has no target or no date, ask once in plain text. A goal with
    no date is allowed; it gets no milestones.
@@ -73,7 +76,7 @@ section 2.
    lift's best set). A goal with no matching data gets no baseline. Never write past
    plans or invented history.
 
-8. **Propose `milestones.md`** for each dated goal. Work backwards from the date
+8. **Draft `milestones.md`** for each dated goal. Work backwards from the date
    through the phases in training-rules section 2, starting from the baseline and
    growing within the load rules in section 5 (10% a week, a cutback every 4th week).
    One row per month:
@@ -86,13 +89,16 @@ section 2.
    | 2026-12 | long run 20 km        | long ride 80 km          |
    ```
 
-   Show the proposal and write it only once the user agrees. If they want changes,
-   adjust and show it again.
+   Write it now with `status: draft` under the heading, so training can use it and
+   setup does not run again for it. Do not show it. The user reviews it when they ask
+   ("show milestones"); once they agree, change the line to `status: agreed`. If they
+   want changes, adjust and show it again.
 
 9. **Create `personal-rules.md`** if missing, with only a header and one line saying
    rules are added from patterns across at least 3 comparable sessions (training-rules
    section 4).
 
-10. **Report** in a few lines: what was created, what was skipped because it existed,
-    what was detected, and what is still missing (e.g. no Strava). Then hand back to
-    the calling skill, so a first `next` still ends with a workout.
+10. **Hand back** to the calling skill, so a first `next` still ends with a workout.
+    Report nothing yourself: `card` adds one line (e.g. `Set up ✓ Goals saved. Say
+    "show milestones" to review the plan to May 2027.`). If setup was run directly, reply
+    with only that line.

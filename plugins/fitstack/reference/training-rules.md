@@ -58,7 +58,8 @@ a movement):
 - **Dated goals** (e.g. marathon by Nov 2027): work backwards from the date through
   phases: base, build, peak, taper (about 2–3 weeks before an endurance event). The
   milestones file holds one target per month. If it is missing or does not cover a goal,
-  propose milestones and write them once the user agrees.
+  write draft milestones (`status: draft`) and use them; the user reviews them when they
+  ask, and the status becomes `agreed` once they do.
 - **Several goals** (e.g. a 200 km ride and a marathon): the goal with the nearer date
   sets the priority. The other is maintained with 1–2 sessions a week. Running, cycling
   and leg strength share the same legs, so count them together (section 5).

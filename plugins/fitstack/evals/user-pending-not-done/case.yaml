@@ -1,7 +1,7 @@
 schema_version: "1.1"
 name: user-pending-not-done
-description: An easy 5 km run planned for Nov 13 was not done (only pickleball). It is returned as pending since Nov 13.
-tags: [user, next, pending, messy]
+description: An easy 5 km run planned for Nov 13 was not done (only pickleball). The card gives it again, titled pending since Nov 13.
+tags: [user, next, pending, card, messy]
 context:
   scaffold_script: setup.sh
 execution:
@@ -14,15 +14,34 @@ graders:
     type: regex
     pattern: 'pending since[^\n]*(2026-11-13|Nov(ember)?\.? 13)'
     flags: i
-  - name: gives-the-5km-run
+  - name: gives-a-run
     type: regex
-    pattern: '5\s*km'
+    pattern: '\d+(\.\d+)?\s*km'
+  - name: card-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?card"'
+  - name: no-fluff-markers
+    type: regex
+    pattern: 'why this session|data notes|\(\s*last\b'
+    flags: i
+    match: not_contains
+  - name: reply-is-card
+    type: llm
+    criteria: |
+      Ignore a first line starting "TEST MODE" and a final "WOULD WRITE" section; they are
+      for testing. Judge only what is between them.
+      PASS if that part is only a workout card: a short title, numbered exercises or
+      segments with their targets, at most one line starting with ⚠, and (on a first run
+      only) one line about setup.
+      FAIL if it also has reasons, assumptions, data notes, warm-up or cool-down, last
+      session numbers, alternatives, goal or milestone status, or questions.
   - name: judge-pending
     type: llm
     criteria: |
       A plan "plan-2026-11-13-run" (easy run, 5 km, 6:30-6:50/km) was made for Nov 13. The
       user played 3 hours of pickleball on Nov 13 and did not run.
-      PASS if the response gives that easy 5 km run again as pending since Nov 13 (it may
-      adjust it, e.g. for tired legs after pickleball, and say why), does not mark it as
-      done or expired, and does not replace it with an unrelated session.
+      PASS if the card gives that easy run again as pending since Nov 13 (it may be
+      shortened or slowed for tired legs), it is not marked done or expired in WOULD
+      WRITE, and it is not replaced with an unrelated session.
       FAIL otherwise.

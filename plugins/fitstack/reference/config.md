@@ -68,6 +68,7 @@ writes `AgentReferences/config.md` with this template. Unknown values are `none`
 - personal_rules: AgentReferences/personal-rules.md
 - meal_photos: <folder> | none
 - imessage_to: <phone> | none
+- text_plans: always | never                # text every workout card to imessage_to
 ```
 
 ## Workout log lifecycle

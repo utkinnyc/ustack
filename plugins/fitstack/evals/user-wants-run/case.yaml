@@ -1,7 +1,7 @@
 schema_version: "1.1"
 name: user-wants-run
-description: The user wants to run today. A run session sized from their real runs, easy after yesterday's pickleball.
-tags: [user, next, run, messy]
+description: The user wants to run today. The card is a run sized from their real runs, easy after yesterday's pickleball.
+tags: [user, next, run, card, messy]
 context:
   scaffold_script: setup.sh
 execution:
@@ -23,6 +23,25 @@ graders:
   - name: plan-is-run
     type: regex
     pattern: '"sport"\s*:\s*"run"'
+  - name: card-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?card"'
+  - name: no-fluff-markers
+    type: regex
+    pattern: 'why this session|data notes|\(\s*last\b'
+    flags: i
+    match: not_contains
+  - name: reply-is-card
+    type: llm
+    criteria: |
+      Ignore a first line starting "TEST MODE" and a final "WOULD WRITE" section; they are
+      for testing. Judge only what is between them.
+      PASS if that part is only a workout card: a short title, numbered exercises or
+      segments with their targets, at most one line starting with ⚠, and (on a first run
+      only) one line about setup.
+      FAIL if it also has reasons, assumptions, data notes, warm-up or cool-down, last
+      session numbers, alternatives, goal or milestone status, or questions.
   - name: judge-run
     type: llm
     criteria: |
@@ -32,11 +51,9 @@ graders:
       Oct 3 5.61 km, 6:16/km, 152.3, 171 · Sep 19 5.02 km, 6:30/km, 156.1, 178.
       Weeks start Monday. The November milestone is a long run of 8 km. The user played
       3 hours of pickleball yesterday ("legs are cooked").
-      Quoting any of these values is correct. Figures worked out from them (weekly totals,
-      a 10% cap, ranges or comparisons across runs) should be marked "(calc)".
-      PASS if it gives a run whose distance and pace follow from those numbers (e.g. an
-      easy run, or the 8 km long run with a reason), keeps any jump in distance small, and
-      mentions or accounts for yesterday's pickleball.
-      FAIL if it prescribes hard intervals or a big jump in distance, gives numbers that
-      match neither these values nor a stated calculation, or presents several worked-out
-      figures with no "(calc)" mark.
+      PASS if the card is a run whose distance and pace follow from those numbers (e.g. an
+      easy run, or the 8 km long run), keeps any jump in distance small, and the plan's
+      reason in WOULD WRITE accounts for yesterday's pickleball. Figures worked out in the
+      reason (weekly totals, a 10% cap) should be marked "(calc)".
+      FAIL if it prescribes hard intervals or a big jump in distance, or gives numbers that
+      match neither these values nor a stated calculation.

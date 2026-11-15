@@ -1,0 +1,32 @@
+schema_version: "1.1"
+name: gather-strava-snapshot
+description: In test mode, Strava is read from the snapshot, the fixed date sets the window, and the Nov 12 log merges with its Strava activity.
+tags: [gather, clean, test-mode]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 25
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: Pull up my training from the last 30 days, including my Strava activities.
+graders:
+  - name: test-mode-banner
+    type: regex
+    pattern: '^\s*\**TEST MODE'
+  - name: uses-snapshot
+    type: regex
+    pattern: 'snapshot'
+    flags: i
+  - name: uses-fixed-today
+    type: regex
+    pattern: 'today:\s*2026-11-14'
+  - name: has-strava-activities
+    type: regex
+    pattern: 'Riverside Tempo[\s\S]*Harbor Loop[\s\S]*Hill Repeats'
+  - name: window-excludes-old-run
+    type: regex
+    pattern: 'Old Bridge Run'
+    match: not_contains
+  - name: nov12-merged
+    type: regex
+    pattern: '\[\s*logs\s*,\s*strava\s*\]'
+    flags: i

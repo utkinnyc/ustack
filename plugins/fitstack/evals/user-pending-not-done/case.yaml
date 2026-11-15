@@ -1,0 +1,28 @@
+schema_version: "1.1"
+name: user-pending-not-done
+description: An easy 5 km run planned for Nov 13 was not done (only pickleball). It is returned as pending since Nov 13.
+tags: [user, next, pending, messy]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 60
+  timeout_seconds: 1200
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: What should I do today?
+graders:
+  - name: says-pending-since-nov13
+    type: regex
+    pattern: 'pending since[^\n]*(2026-11-13|Nov(ember)?\.? 13)'
+    flags: i
+  - name: gives-the-5km-run
+    type: regex
+    pattern: '5\s*km'
+  - name: judge-pending
+    type: llm
+    criteria: |
+      A plan "plan-2026-11-13-run" (easy run, 5 km, 6:30-6:50/km) was made for Nov 13. The
+      user played 3 hours of pickleball on Nov 13 and did not run.
+      PASS if the response gives that easy 5 km run again as pending since Nov 13 (it may
+      adjust it, e.g. for tired legs after pickleball, and say why), does not mark it as
+      done or expired, and does not replace it with an unrelated session.
+      FAIL otherwise.

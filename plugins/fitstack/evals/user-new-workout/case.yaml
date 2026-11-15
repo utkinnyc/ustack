@@ -1,0 +1,33 @@
+schema_version: "1.1"
+name: user-new-workout
+description: No pending plan. next picks a session from the rotation, the week and yesterday's 3-hour pickleball, with targets from the last numbers.
+tags: [user, next, messy]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 60
+  timeout_seconds: 1200
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: What should I do today?
+graders:
+  - name: fitcheck-before-session
+    type: tool_order
+    before: { tool: Skill, input_match: '"skill"\s*:\s*"(?:[\w-]+:)?fitcheck"' }
+    after: { tool: Skill, input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(strength|run|ride|swim)"' }
+  - name: would-write-plan
+    type: regex
+    pattern: 'WOULD WRITE[\s\S]*"type"\s*:\s*"plan"'
+  - name: targets-show-last
+    type: regex
+    pattern: '\(\s*last'
+    flags: i
+  - name: judge-sensible-pick
+    type: llm
+    criteria: |
+      Context: today is Sat Nov 14. Legs were trained Nov 11, push Nov 12, pull last on Nov 5.
+      The user played 3 hours of pickleball on Nov 13 ("legs are cooked"), which counts as
+      a hard leg day. Goal 1 is a half marathon (Apr 2027), goal 2 is squat 155x5.
+      PASS if today's session is not a hard leg session, follows from that history (e.g. a
+      pull session, or an easy run, with the reason given), and its targets are one small
+      step from, or equal to, the last numbers it shows.
+      FAIL if it prescribes heavy legs, ignores the history, or invents numbers.

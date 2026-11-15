@@ -1,0 +1,42 @@
+schema_version: "1.1"
+name: gather-nov12-sets
+description: All of Nov 12's exercises and sets come back, normalised, with the note kept verbatim.
+tags: [gather, clean]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 25
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: What did I do at the gym on Nov 12?
+graders:
+  - name: incline-press
+    type: regex
+    pattern: '50\s*x\s*10[\s\S]*55\s*x\s*8[\s\S]*55\s*x\s*7'
+  - name: cable-row-3x12-expanded
+    type: regex
+    pattern: '90\s*(lbs?)?\s*x\s*12[\s\S]*90\s*(lbs?)?\s*x\s*12[\s\S]*90\s*(lbs?)?\s*x\s*12'
+  - name: face-pulls-expanded
+    type: regex
+    pattern: '40\s*x\s*15[\s\S]*40\s*x\s*15[\s\S]*40\s*x\s*12'
+  - name: shoulder-note-kept
+    type: regex
+    pattern: 'shoulder a bit tight'
+    flags: i
+  - name: used-data-gatherer
+    type: tool_used
+    tool: Agent
+    input_match: 'data-gatherer'
+  - name: judge-complete-and-honest
+    type: llm
+    criteria: |
+      The user logged this on Nov 12:
+      - Incline dumbbell press: 50x10, 55x8 (felt heavy), 55x7
+      - Cable row: 90x12, 90x12, 90x12 (logged as "3x12 @ 90")
+      - Leg extension: 100lb x12, 110lb x10
+      - Face pulls: 40x15, 40x15, 40x12
+      - Note: "Left shoulder a bit tight at the end of the session."
+      PASS if the response lists all four exercises with every set above, keeps the note,
+      and adds no numbers that are not in the log (no totals, volume, averages or invented
+      heart rate).
+      FAIL if any exercise or set is missing or wrong, the note is dropped, or numbers are
+      invented.

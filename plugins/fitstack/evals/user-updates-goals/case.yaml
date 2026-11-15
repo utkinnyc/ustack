@@ -1,0 +1,34 @@
+schema_version: "1.1"
+name: user-updates-goals
+description: The user adds a 10K goal. goals.md keeps the old goals, priorities follow the dates, milestones are re-proposed, and the baseline uses measured data.
+tags: [user, goals, messy]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 60
+  timeout_seconds: 1200
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: I want to add a new goal, run a 10K in under 55 minutes by March 2027. Keep my other goals.
+graders:
+  - name: goals-skill-ran
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?goals"'
+  - name: would-write-goals-with-all-three
+    type: regex
+    pattern: '(?=[\s\S]*WOULD WRITE)(?=[\s\S]*goals\.md)(?=[\s\S]*10\s?K)(?=[\s\S]*Half marathon)(?=[\s\S]*Get stronger)'
+    flags: i
+  - name: date-2027-03
+    type: regex
+    pattern: '2027-03'
+  - name: judge-goals
+    type: llm
+    criteria: |
+      Existing goals: Half marathon by 2027-04 (priority 1), Get stronger (squat 155x5, no
+      date). New: 10K under 55 min by 2027-03. Longest recent run is 7.42 km; there is no
+      10 km run in the data.
+      PASS if the 10K becomes priority 1 (nearer date) with the half marathon 2 and the
+      strength goal after them, both old goals are kept unchanged, milestones for the 10K
+      are proposed and the user is asked to agree (not presented as written), and any
+      baseline is measured (or it says there is no 10 km run yet).
+      FAIL if a goal is lost or changed, priorities ignore the dates, or a 10K time is invented.

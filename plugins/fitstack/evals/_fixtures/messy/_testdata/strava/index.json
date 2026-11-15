@@ -1,0 +1,39 @@
+{
+ "captured": "2026-11-14",
+ "source": "synthetic test data in the style of a real export (not a real athlete)",
+ "range": "2026-09-01T00:00:00 to 2026-11-14T23:59:59",
+ "calls": {
+  "get_athlete_profile": {
+   "file": "get_athlete_profile.json"
+  },
+  "list_activities": {
+   "args": {
+    "range_start": "2026-09-01T00:00:00",
+    "range_end": "2026-11-14T23:59:59",
+    "first": 30,
+    "use_preferred_units": true,
+    "include_tags": true
+   },
+   "pages": [
+    {
+     "after": null,
+     "file": "list_activities/page-1.json"
+    },
+    {
+     "after": "WyIyMDI2LTEwLTAyVDE5OjM1OjI4IiwyMTE3MjY1Njk3OF0=",
+     "file": "list_activities/page-2.json"
+    }
+   ]
+  },
+  "get_activity_performance": {
+   "by": "activity_id",
+   "dir": "get_activity_performance/",
+   "note": "all runs in range"
+  },
+  "get_strength_workout_details": {
+   "by": "activity_id",
+   "dir": "get_strength_workout_details/",
+   "note": "WeightTraining sessions 2026-10-16 to 2026-11-12; all have empty exercise_sets (sets exist only in the logs)"
+  }
+ }
+}

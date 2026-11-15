@@ -13,7 +13,7 @@ section 2.
 
 - **Only fill gaps.** Check each file in `AgentReferences/`. A file that exists is read,
   never overwritten, and its step is skipped. Running setup again only creates what is
-  still missing.
+  still missing. To change existing goals, use the `goals` skill.
 - **Detect before asking.** Ask only for what cannot be found in the folder or Strava.
 - **At most two question rounds** in total: one AskUserQuestion round, and one plain
   follow-up only if a goal still has no target or date.

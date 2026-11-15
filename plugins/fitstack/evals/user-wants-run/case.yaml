@@ -1,0 +1,36 @@
+schema_version: "1.1"
+name: user-wants-run
+description: The user wants to run today. A run session sized from their real runs, easy after yesterday's pickleball.
+tags: [user, next, run, messy]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 60
+  timeout_seconds: 1200
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: I want to run today.
+graders:
+  - name: run-skill-ran
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?run"'
+  - name: has-distance
+    type: regex
+    pattern: '\d+(\.\d+)?\s*km'
+  - name: has-pace
+    type: regex
+    pattern: '[5-7]:\d\d\s*(/|per)\s*km'
+  - name: plan-is-run
+    type: regex
+    pattern: '"sport"\s*:\s*"run"'
+  - name: judge-run
+    type: llm
+    criteria: |
+      Recent runs: Nov 10 4.11 km (6:16/km), Nov 7 7.42 km (6:19/km, longest in months),
+      Oct 31 6.81 km, Oct 17 6.12 km. The November milestone is a long run of 8 km. The
+      user played 3 hours of pickleball yesterday ("legs are cooked").
+      PASS if it gives a run whose distance and pace follow from those numbers (e.g. an
+      easy run, or the 8 km long run with a reason), keeps any jump in distance small,
+      mentions or accounts for yesterday's pickleball, and marks computed figures as
+      calculated.
+      FAIL if it prescribes hard intervals or a big jump in distance, or invents numbers.

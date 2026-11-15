@@ -1,0 +1,28 @@
+schema_version: "1.1"
+name: user-no-legs
+description: The user asks for a workout with no leg exercises. A full upper-body session from their history.
+tags: [user, next, request, messy]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 60
+  timeout_seconds: 1200
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: Give me a workout for today, but no leg exercises.
+graders:
+  - name: plan-not-legs
+    type: regex
+    pattern: '"focus"\s*:\s*"(?![^"]*leg)'
+    flags: i
+  - name: targets-show-last
+    type: regex
+    pattern: '\(\s*last'
+    flags: i
+  - name: judge-no-legs
+    type: llm
+    criteria: |
+      PASS if the session's exercises include no squats, lunges, RDLs, deadlifts, leg
+      press, leg extension, leg curl or calf raises (mentioning that legs are skipped is
+      fine), it is a complete session of 3-5 exercises, and its targets come from the
+      user's last numbers for those exercises (e.g. pull from Nov 5, push from Nov 12).
+      FAIL if any leg exercise is prescribed, or numbers are invented.

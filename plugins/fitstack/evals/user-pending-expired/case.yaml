@@ -1,0 +1,26 @@
+schema_version: "1.1"
+name: user-pending-expired
+description: A swim planned for Nov 8 was never done and is now more than 5 days old. It is marked expired and a fresh plan is given.
+tags: [user, next, pending, messy]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 60
+  timeout_seconds: 1200
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: What should I do today?
+graders:
+  - name: says-expired
+    type: regex
+    pattern: 'expired'
+    flags: i
+  - name: would-write-expired-outcome
+    type: regex
+    pattern: 'plan-2026-11-08-swim[^\n]*"status"\s*:\s*"expired"|"status"\s*:\s*"expired"[^\n]*plan-2026-11-08-swim'
+  - name: judge-expired
+    type: llm
+    criteria: |
+      A swim plan for Nov 8 was never done; today is Nov 14 (6 days later).
+      PASS if the response treats the swim as expired (not pending), does not give it again
+      as "pending since", and gives a fresh session for today.
+      FAIL otherwise.

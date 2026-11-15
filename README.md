@@ -16,7 +16,7 @@ To pick up updates, run `/plugin marketplace update ustack`.
 | Plugin | What it does |
 |---|---|
 | [fitstack](plugins/fitstack/) | A training partner that plans your next workout from your logs, Strava and goals. |
-| [shipstack](plugins/shipstack/) | Plan, scaffold, review and ship small TypeScript web apps. |
+| [devstack](plugins/devstack/) | Plan, scaffold, review and ship small TypeScript web apps. |
 
 Each plugin's README covers its setup and skills.
 

@@ -24,22 +24,29 @@ If a script does not exist, record it as skipped. Never silence an error with `a
 
 Check each against the changed files and fix what fails:
 
-- **Network calls.** Every `fetch` or external call checks `res.ok`, has a timeout
-  (`AbortSignal.timeout(...)`), and handles failure without crashing the page or job.
+- **Network calls.** Go through `fetchJson` (timeout, retries, no retry on 4xx except
+  429), check `res.ok`, and fail without crashing the page or job. Fan-out uses
+  `mapLimit`. No axios or p-limit.
+- **LLM.** Configured only by `LLM_BASE_URL`, `LLM_API_KEY` (or `HF_TOKEN`), `LLM_MODEL`.
+  The app still runs, degraded, with the LLM off.
 - **Secrets.** No keys, tokens or passwords in the repo or git history of this change.
   Check with `git diff main...HEAD` and a grep for `key`, `token`, `secret`. `.env` is in
   `.gitignore`.
 - **Env vars.** Every `process.env.X` in the code appears in `.env.example` with a
   comment. Required ones fail fast with a clear message at startup.
-- **SQLite path.** The database path comes from an env var (e.g. `DATABASE_PATH`) that
-  defaults to a file under the mounted volume (`/data`), never inside the image or
-  `.next`. Schema creation is idempotent (`CREATE TABLE IF NOT EXISTS`).
+- **SQLite.** `node:sqlite` only, WAL mode, path from `<APP>_DB` (default
+  `data/<app>.db`, `/data/<app>.db` in Docker on the volume), never inside the image or
+  `.next`. Schema uses `CREATE TABLE IF NOT EXISTS`; one connection cached on
+  `globalThis`. Pages reading the DB export `dynamic = "force-dynamic"`.
 - **Request path.** Nothing slow or blocking runs in a request: no long loops, big
-  synchronous file work or polling. Background work lives in `instrumentation.ts` jobs
-  and catches its own errors so one failure does not kill the process.
+  synchronous file work or polling. Background work is a scheduler job started from
+  `instrumentation.ts` (nodejs runtime only, once via a `globalThis` flag, disabled by
+  `<APP>_DISABLE=1`); each job catches its own errors, and its last status is on
+  `/api/health`.
 - **Works without JS.** Forms use real `<form>` with server actions, navigation uses
-  `<a>`, content renders in server components. Client components are only for what truly
-  needs state; each has a one-line reason.
+  `<a>`, content renders in server components. The only client component is the small
+  `router.refresh()` interval one. Charts are inline SVG; no Tailwind, shadcn, chart
+  libs or animations.
 - **Dependencies.** Anything added this change was approved by the user. If not, flag it
   and suggest the built-in alternative.
 - **Docker.** If the Dockerfile or `next.config.ts` changed, confirm `output:

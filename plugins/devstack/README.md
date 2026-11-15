@@ -1,14 +1,14 @@
-# shipstack
+# devstack
 
-shipstack is a personal software factory for Claude Code: plan, scaffold, review and
+devstack is a personal software factory for Claude Code: plan, scaffold, review and
 ship small web apps fast, with the same stack and habits every time. It is opinionated
 and meant to be tuned over time.
 
 ```
-/shipstack:plan      # design note in docs/plan.md, then wait for a yes
-/shipstack:scaffold  # new app + private GitHub repo
-/shipstack:review    # pre-ship self-review
-/shipstack:ship      # review, commit, push, open a PR
+/devstack:plan      # design note in docs/plan.md, then wait for a yes
+/devstack:scaffold  # new app + private GitHub repo
+/devstack:review    # pre-ship self-review
+/devstack:ship      # review, commit, push, open a PR
 ```
 
 ## The stack
@@ -31,7 +31,7 @@ and meant to be tuned over time.
 
 ```
 /plugin marketplace add utkinnyc/ustack
-/plugin install shipstack@ustack
+/plugin install devstack@ustack
 ```
 
 **Requirements:** [Claude Code](https://claude.com/claude-code), Node 24, Docker, and the

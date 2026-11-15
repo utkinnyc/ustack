@@ -11,9 +11,9 @@
       "description": "fitstack: fitness and training skills"
     },
     {
-      "name": "shipstack",
-      "source": "./plugins/shipstack",
-      "description": "shipstack: plan, scaffold, review and ship small TypeScript web apps"
+      "name": "devstack",
+      "source": "./plugins/devstack",
+      "description": "devstack: plan, scaffold, review and ship small TypeScript web apps"
     }
   ]
 }

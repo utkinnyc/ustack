@@ -1,0 +1,14 @@
+{
+  "name": "ustack",
+  "owner": {
+    "name": "Utkarsh Khandelwal"
+  },
+  "description": "ustack: Utkarsh's Claude Code skills",
+  "plugins": [
+    {
+      "name": "fitstack",
+      "source": "./plugins/fitstack",
+      "description": "fitstack: fitness and training skills"
+    }
+  ]
+}

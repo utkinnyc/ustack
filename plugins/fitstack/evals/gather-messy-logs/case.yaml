@@ -21,7 +21,8 @@ graders:
     pattern: '2026-11-04'
   - name: strength-without-sets-oct29
     type: regex
-    pattern: 'strength without sets:[^\n]*2026-10-29'
+    # Oct 29 is in Strava with no log: the user must be told it has no sets, in any wording
+    pattern: '(2026-10-29|Oct(ober)?\.? 29)[^\n]*no (sets|exercises)|no (sets|exercises)[^\n]*(2026-10-29|Oct(ober)?\.? 29)|without sets[^\n]*(2026-10-29|Oct(ober)?\.? 29)'
     flags: i
   - name: strava-description-verbatim
     type: regex
@@ -32,7 +33,8 @@ graders:
     flags: i
   - name: ignored-month-file
     type: regex
-    pattern: 'ignored files:[^\n]*November 2026'
+    # the user must be told, in any wording: "ignored files: November 2026.md" or "November 2026.md was skipped"
+    pattern: 'November 2026[^\n]*(skip|ignor|not (read|used))|(skip|ignor|not (read|used))[^\n]*November 2026'
     flags: i
   - name: no-ai-summary
     type: regex
@@ -45,7 +47,12 @@ graders:
       Nov 2 "knees caving in a bit on the last set", Nov 11 "Kept the knees out this time",
       Nov 12 the gym/food line and "Finished all in around 55 mins", Oct 28 "lower back felt
       a little tight after squats".
-      PASS if those notes appear on the right days, every logged set is listed, and no
-      numbers are invented or computed (no totals, averages or paces the sources do not give).
-      FAIL if notes are dropped or paraphrased beyond recognition, sets are missing, or
-      numbers are invented.
+      Strava supplies, per activity: start time, duration, distance, pace, max pace, average
+      and max heart rate, elevation and relative effort (e.g. Oct 31 run: 6.81 km, 6:17/km,
+      avg HR 151.6, max HR 169). Showing those values is correct, and so is writing a
+      duration in h:mm:ss.
+      PASS if those notes appear on the right days, every logged set is listed, and the
+      reply adds no numbers of its own: no totals, counts per sport, averages or trends,
+      unless marked "(calc)".
+      FAIL if notes are dropped or paraphrased beyond recognition, sets are missing, or it
+      adds unmarked totals, counts or other numbers that are in neither the logs nor Strava.

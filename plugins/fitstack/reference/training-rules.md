@@ -78,7 +78,9 @@ and today that no other plan has claimed:
 
 **Pending plans carry forward.**
 - A pending plan is the next workout. Give it again, saying "pending since <day>",
-  unless the user asks for something specific.
+  unless the user asks for something specific. `<day>` is always the plan's `for` day
+  (the day it was meant to be done), never the `date` it was written. A plan written
+  Nov 12 for Nov 13 is "pending since Nov 13".
 - Re-check it against today's fitcheck first. If new pain or constraints affect it,
   adjust it (and append the adjusted plan with the same `id`).
 - **The user's request wins.** If the user asks for something specific or different

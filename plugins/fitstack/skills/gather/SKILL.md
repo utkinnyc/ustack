@@ -14,10 +14,21 @@ Rules: [agent-rules](../../reference/agent-rules.md), [config](../../reference/c
    - The full text of agent-rules (agent-rules rule 2).
    - The fitstack folder's absolute path.
    - `daily_logs` and `monthly_logs`: the config's values as absolute paths.
-   - `focus`, if the caller gave one (e.g. "runs, with splits and heart rate").
+   - `focus`, only if the caller named a sport or an exercise (e.g. "runs, with splits
+     and heart rate", "squat"). A time span ("last 30 days", "this week") or "all
+     workouts" is not a focus: pass no focus, and the agent uses its default window.
    - In test mode (agent-rules rule 5): `today`, and `strava_snapshot` as an absolute
      path, from `test-mode.md`.
 3. **If the agent tool is unavailable,** do the agent's steps yourself (see
    `../../agents/data-gatherer.md`) and keep the same output format.
-4. **Return the agent's output unchanged.** If the user asked directly, show it and add
-   one line on the biggest thing to act on.
+4. **Return the agent's output.**
+   - **Called by another skill:** return it unchanged.
+   - **The user asked directly:** show every workout, set and note as the agent gave
+     them. You may lay them out for reading (e.g. a table), but drop nothing and change
+     no value. After the workouts, add:
+     - **Data notes**, in plain words, from the agent's SOURCES and STATS: sources that
+       could not be fetched, ignored files (by name), strength sessions without sets (by
+       date), and unmerged same-day pairs. Omit a note that does not apply.
+     - **One line** on the biggest thing to act on.
+   - **Add no numbers of your own.** No totals, counts, averages or trends the agent did
+     not return. If you must give one, mark it `(calc)` (agent-rules rule 4).

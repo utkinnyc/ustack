@@ -50,7 +50,7 @@ score or a feeling.
 FITCHECK: clear | mild | moderate | RED FLAG
 pain: <area, score or "no score", since <date>, source> | none
 assuming: <what was carried forward, e.g. "left knee still sore (open since Nov 10)"> | nothing
-pending plan: <id, for <day>, pending since <day>> | none
+pending plan: <id>, pending since <the plan's `for` day> | none
 outcomes: <plan id → status, key diff>, ... | none
 constraints: <from the user's messages> | none
 ```

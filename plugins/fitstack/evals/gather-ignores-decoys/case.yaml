@@ -29,5 +29,6 @@ graders:
     pattern: '65\s*[x×]\s*10[\s\S]*70\s*[x×]\s*8[\s\S]*70\s*[x×]\s*6'
   - name: reports-ignored-file
     type: regex
-    pattern: 'ignored files:.*November 2026'
+    # the user must be told, in any wording: "ignored files: November 2026.md" or "November 2026.md was skipped"
+    pattern: 'November 2026[^\n]*(skip|ignor|not (read|used))|(skip|ignor|not (read|used))[^\n]*November 2026'
     flags: i

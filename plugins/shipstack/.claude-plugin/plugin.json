@@ -1,0 +1,8 @@
+{
+  "name": "shipstack",
+  "version": "0.1.0",
+  "description": "shipstack: plan, scaffold, review and ship small TypeScript web apps",
+  "author": {
+    "name": "Utkarsh Khandelwal"
+  }
+}

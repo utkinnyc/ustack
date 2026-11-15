@@ -27,7 +27,8 @@ Read first: [agent-rules](../../reference/agent-rules.md), [config](../../refere
       training-rules section 1; if it breaks another rule, say which one and why. Any
       pending plan stays pending.
    2. **A plan is pending** (fitcheck lists it) → give it again as "pending since
-      <day>". If fitcheck's pain or constraints affect it, adjust it.
+      <the plan's `for` day>" (training-rules section 3). If fitcheck's pain or
+      constraints affect it, adjust it.
    3. **Otherwise** → pick the day type from training-rules: the default week (section
       5), the goal's phase (section 2), personal rules, and fitcheck's constraints.
 5. **Get the session.** Invoke the matching sport skill (`strength`, `run`, `ride` or

@@ -10,6 +10,10 @@ recommendation. Gather focus: "runs, with splits and heart rate".
 
 ## Analysis
 
+Every figure you work out yourself is marked `(calc)`: weekly totals, changes, caps,
+ranges and comparisons across runs (e.g. "6:16–6:19/km over the last 3 runs (calc)").
+Values copied from one activity, as the gather output gives them, are not marked.
+
 - Weekly distance for the last 3–4 weeks and the change week to week (flag more than
   10%). Mark these `(calc)`.
 - Longest run, compared with this month's milestone.

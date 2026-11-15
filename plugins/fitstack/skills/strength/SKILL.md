@@ -22,7 +22,9 @@ recommendation. Gather focus: "strength". Weights use the config's `weight_unit`
 
 ## Recommendation
 
-- 3–5 exercises. For each exercise with history, set targets per training-rules section
+- 3–5 exercises in total, counting core, hangs and carries. Warm-up and cool-down
+  moves do not count. If more would fit, pick the ones that serve the goal and the
+  day's focus. For each exercise with history, set targets per training-rules section
   6 (or the user's personal rules), with the last session in parentheses:
   `Shoulder press: 95x8, 95x8, 95x7  (last: 90x9, 90x9, 90x9)`.
 - Exercises affected by an open injury or bad form are held or reduced, never

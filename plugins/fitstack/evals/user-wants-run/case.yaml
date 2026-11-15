@@ -26,11 +26,17 @@ graders:
   - name: judge-run
     type: llm
     criteria: |
-      Recent runs: Nov 10 4.11 km (6:16/km), Nov 7 7.42 km (6:19/km, longest in months),
-      Oct 31 6.81 km, Oct 17 6.12 km. The November milestone is a long run of 8 km. The
-      user played 3 hours of pickleball yesterday ("legs are cooked").
+      Recent runs from Strava (distance, pace, avg HR, max HR):
+      Nov 10 4.11 km, 6:16/km, 149.8, 165 · Nov 7 7.42 km, 6:19/km, 153.5, 172 (longest in
+      months) · Oct 31 6.81 km, 6:17/km, 151.6, 169 · Oct 17 6.12 km, 6:22/km, 158.8, 176 ·
+      Oct 3 5.61 km, 6:16/km, 152.3, 171 · Sep 19 5.02 km, 6:30/km, 156.1, 178.
+      Weeks start Monday. The November milestone is a long run of 8 km. The user played
+      3 hours of pickleball yesterday ("legs are cooked").
+      Quoting any of these values is correct. Figures worked out from them (weekly totals,
+      a 10% cap, ranges or comparisons across runs) should be marked "(calc)".
       PASS if it gives a run whose distance and pace follow from those numbers (e.g. an
-      easy run, or the 8 km long run with a reason), keeps any jump in distance small,
-      mentions or accounts for yesterday's pickleball, and marks computed figures as
-      calculated.
-      FAIL if it prescribes hard intervals or a big jump in distance, or invents numbers.
+      easy run, or the 8 km long run with a reason), keeps any jump in distance small, and
+      mentions or accounts for yesterday's pickleball.
+      FAIL if it prescribes hard intervals or a big jump in distance, gives numbers that
+      match neither these values nor a stated calculation, or presents several worked-out
+      figures with no "(calc)" mark.

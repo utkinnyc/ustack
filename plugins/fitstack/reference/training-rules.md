@@ -70,12 +70,24 @@ a movement):
 
 ## 3. Learning from outcomes
 
-**Judge every outcome.** At the start of a session, for each pending plan whose day has
-passed, look in the logs and Strava for a workout of that sport between the plan's day
-and today that no other plan has claimed:
-- Found → write an `outcome` record (`as_planned`, `modified` or `substituted`).
-- Not found, and the plan's day was 5 days ago or less → still pending.
-- Not found, and more than 5 days ago → write an `outcome` with status `expired`.
+**Judge every outcome.** At the start of a session, for each pending plan, look in the
+gather output for a workout from the plan's day up to **and including today** that no
+other plan has claimed. A plan for today counts too: it may already be done.
+
+Match by what the session trained, not by the exact exercises. Users swap machines, drop
+an exercise or add one.
+
+| Found | Outcome |
+|---|---|
+| Same sport, same focus (muscle groups, or run/ride/swim type), same exercises or segments | `as_planned` (with diffs if targets differed) |
+| Same sport, same focus, different exercises (e.g. pull-ups and cable rows for a back day) | `modified`, listing what was done instead |
+| Same sport, different focus (e.g. chest on a planned back day) | `substituted`. The planned focus is still owed: reschedule it, do not stack it |
+| A strength session in Strava with no log, on a strength plan | `modified`, diff "no sets logged". Assume it was done; keep the next targets at the plan's level |
+| A different sport (e.g. a ride on a planned run) | no match. The plan stays pending, but the session counts toward load (section 5) |
+| Nothing, and the plan's day was 5 days ago or less (or is today) | still pending |
+| Nothing, and more than 5 days ago | `expired` |
+
+Muscle groups come from the exercise names, as written (e.g. `Latt pull down` → back).
 
 **Pending plans carry forward.**
 - A pending plan is the next workout. Give it again, saying "pending since <day>",

@@ -48,6 +48,8 @@ Your whole reply is the card. The only other lines allowed:
   see a doctor or physiotherapist.
 - **First run** (setup just ran): one line after the card, e.g. `Set up ✓ Goals saved.
   Say "show milestones" to review the plan to May 2027.`
+- **Already trained today** (the session is for tomorrow): `Done today ✓` as the first
+  line, and the title starts with `Tomorrow:`, e.g. `Tomorrow: Back Day 💪`.
 - **Texting not yet confirmed** (step 2 below): one line saying how to start it.
 - **Test mode** (agent-rules rule 5): the `TEST MODE` line first, and the `WOULD WRITE`
   section last. These are for testing, not the user.

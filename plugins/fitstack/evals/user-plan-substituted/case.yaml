@@ -1,0 +1,58 @@
+schema_version: "1.1"
+name: user-plan-substituted
+description: Today's plan was a back day, but the log shows chest and shoulders. That is substituted, the back day is still owed, and tomorrow's card is the back day.
+tags: [user, next, outcome, card, messy]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 60
+  timeout_seconds: 1200
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: What should I do today?
+graders:
+  - name: outcome-substituted
+    type: regex
+    pattern: 'plan-2026-11-14-strength[^\n]*"status"\s*:\s*"substituted"|"status"\s*:\s*"substituted"[^\n]*plan-2026-11-14-strength'
+  - name: says-done-today
+    type: regex
+    pattern: 'done today'
+    flags: i
+  - name: card-is-for-tomorrow
+    type: regex
+    pattern: 'tomorrow'
+    flags: i
+  - name: new-plan-for-nov15
+    type: regex
+    pattern: '"type"\s*:\s*"plan"[^\n]*"for"\s*:\s*"2026-11-15"'
+  - name: tomorrow-is-back
+    type: regex
+    pattern: 'pull\s*-?down|\brow\b'
+    flags: i
+  - name: card-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?card"'
+  - name: no-fluff-markers
+    type: regex
+    pattern: 'why this session|data notes|\(\s*last\b'
+    flags: i
+    match: not_contains
+  - name: reply-is-card
+    type: llm
+    criteria: |
+      Ignore a first line starting "TEST MODE" and a final "WOULD WRITE" section; they are
+      for testing. Judge only what is between them.
+      PASS if that part is only a workout card: an optional "Done today ✓" line, a short
+      title, numbered exercises or segments with their targets, and at most one line
+      starting with ⚠.
+      FAIL if it also has reasons, assumptions, data notes, warm-up or cool-down, last
+      session numbers, alternatives, goal or milestone status, or questions.
+  - name: judge-back-still-owed
+    type: llm
+    criteria: |
+      The plan for today was a back day (lat pulldown, low row, rear delt fly). Today's log
+      has chest press, shoulder press and lateral raises instead: different muscles.
+      PASS if it records the back plan as substituted (not done as planned), does not
+      give a second session today, and tomorrow's card (Nov 15) is the back session.
+      FAIL if it counts the chest session as the back plan, plans more training today,
+      or drops the back day.

@@ -13,8 +13,8 @@ not want.
 ## 1. Dependencies (the only ones)
 
 `next`, `react`, `react-dom`, plus dev: `typescript`, `@types/node`, `@types/react`,
-`@types/react-dom`. Nothing else without asking. Use exact `latest` versions from
-`npm install`.
+`@types/react-dom`. Nothing else without asking. Let
+`npm install` pick current versions.
 
 ## 2. Files
 
@@ -30,7 +30,6 @@ import type { NextConfig } from "next";
 
 const config: NextConfig = {
   output: "standalone",
-  serverExternalPackages: ["node:sqlite"],
 };
 
 export default config;

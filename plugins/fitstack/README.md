@@ -83,6 +83,7 @@ It never overwrites files that already exist. Then you get your first workout.
 |---|---|
 | **`next`** | **Start here.** Decides your next workout, or a week plan, across all sports. |
 | `setup` | First run: creates whatever is missing in `AgentReferences/`. Never overwrites. |
+| `goals` | Shows, adds, changes or retires goals, and re-proposes milestones to match. |
 | `fitcheck` | Checks past plans against what you did, carries forward injuries, flags red flags. Asks nothing. |
 | `gather` | Fetches your workouts from the logs, Strava and Apple Health. |
 | `strength` | Next lift session: from your history, on request ("chest day"), or a full-body default. |

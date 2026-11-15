@@ -9,7 +9,10 @@ outside that folder is used (see [agent-rules](agent-rules.md)).
 Use the first that applies:
 
 1. A folder path the user gave in this conversation.
-2. The current working directory, if it contains `AgentReferences/config.md`.
+2. The current working directory, if it looks like a fitstack folder: it contains an
+   `AgentReferences/` folder, a `test-mode.md` file, or a folder of daily log files
+   named like `Nov 12.md` (e.g. `WorkoutLogs/`). A first run often has logs but no
+   `AgentReferences/` yet.
 3. Otherwise, ask the user once for the folder's path.
 
 The config is always `<fitstack folder>/AgentReferences/config.md`. Every path in it is

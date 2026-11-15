@@ -1,0 +1,40 @@
+schema_version: "1.1"
+name: user-first-time
+description: A new user with logs and Strava but no AgentReferences. Setup runs from the answers in the prompt, then a workout is still given.
+tags: [user, setup, messy]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 60
+  timeout_seconds: 1200
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: |
+    Hey, I'm new to fitstack. My goals: finish a half marathon by April 2027, and get
+    stronger (barbell squat 155x5, no date). I use lb and km, and my week starts on Monday.
+    What should I do today?
+graders:
+  - name: setup-ran
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?setup"'
+  - name: test-mode-banner
+    type: regex
+    pattern: '^\s*\**TEST MODE'
+  - name: would-write-all-files
+    type: regex
+    pattern: '(?=[\s\S]*WOULD WRITE)(?=[\s\S]*config\.md)(?=[\s\S]*goals\.md)(?=[\s\S]*state\.jsonl)(?=[\s\S]*personal-rules\.md)'
+  - name: goals-from-prompt
+    type: regex
+    pattern: '(?=[\s\S]*half marathon)(?=[\s\S]*2027-04)(?=[\s\S]*155\s*x\s*5)'
+    flags: i
+  - name: judge-first-run
+    type: llm
+    criteria: |
+      PASS if all of these hold:
+      - It did not ask for the folder path, the units, the week start or the goals (all were given).
+      - Config, goals, state and personal rules are shown as files it would write.
+      - Milestones toward the half marathon are proposed and the user is asked to agree;
+        they are not presented as already written.
+      - Any baseline uses measured data only (e.g. longest run 7.42 km, squat 135x6 or 140x4).
+      - It still ends with a concrete workout for today.
+      FAIL if any of these is missing, or it invents past plans or history.

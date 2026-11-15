@@ -1,0 +1,13 @@
+{
+ "id": 10000001,
+ "first_name": "Sam",
+ "last_name": "Rivera",
+ "measurement_preference": "Metric",
+ "gender": "Man",
+ "location": {
+  "city": "Jersey City",
+  "state": "New Jersey",
+  "country": "United States"
+ },
+ "current_focus": null
+}

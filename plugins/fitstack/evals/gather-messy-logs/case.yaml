@@ -1,0 +1,51 @@
+schema_version: "1.1"
+name: gather-messy-logs
+description: Real-world style logs (blank lines, "each side", "so 90 x 6", seconds, typos, notes) and Strava (default titles, descriptions, a day with no log, a log with no Strava) come back complete and honest.
+tags: [gather, messy]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 25
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: Show me all my workouts from the last 30 days.
+graders:
+  - name: shoulder-press-so-line
+    type: regex
+    pattern: '90\s*x\s*6[\s\S]*90\s*x\s*5[\s\S]*80\s*x\s*8'
+  - name: dead-hang-seconds
+    type: regex
+    pattern: '35\s*(s\b|sec)[\s\S]*30\s*(s\b|sec)[\s\S]*27\s*(s\b|sec)'
+    flags: i
+  - name: nov4-log-without-strava
+    type: regex
+    pattern: '2026-11-04'
+  - name: strength-without-sets-oct29
+    type: regex
+    pattern: 'strength without sets:[^\n]*2026-10-29'
+    flags: i
+  - name: strava-description-verbatim
+    type: regex
+    pattern: 'legs are cooked'
+  - name: nov12-merged
+    type: regex
+    pattern: '2026-11-12[\s\S]*?\[\s*logs\s*,\s*strava\s*\]'
+    flags: i
+  - name: ignored-month-file
+    type: regex
+    pattern: 'ignored files:[^\n]*November 2026'
+    flags: i
+  - name: no-ai-summary
+    type: regex
+    pattern: '9,870|188 bpm|Top PR'
+    match: not_contains
+  - name: judge-notes-and-honesty
+    type: llm
+    criteria: |
+      The logs include these notes, which must be kept close to verbatim on their days:
+      Nov 2 "knees caving in a bit on the last set", Nov 11 "Kept the knees out this time",
+      Nov 12 the gym/food line and "Finished all in around 55 mins", Oct 28 "lower back felt
+      a little tight after squats".
+      PASS if those notes appear on the right days, every logged set is listed, and no
+      numbers are invented or computed (no totals, averages or paces the sources do not give).
+      FAIL if notes are dropped or paraphrased beyond recognition, sets are missing, or
+      numbers are invented.

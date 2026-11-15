@@ -1,0 +1,33 @@
+schema_version: "1.1"
+name: gather-ignores-decoys
+description: The month file in the daily folder, the stale October daily file and the AI Summary are never used as data.
+tags: [gather, clean]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 25
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: Show me all my workouts from the last 30 days.
+graders:
+  - name: no-month-file-data
+    type: regex
+    pattern: 'woodchop|999'
+    flags: i
+    match: not_contains
+  - name: no-stale-october-daily
+    type: regex
+    pattern: 'hip thrust'
+    flags: i
+    match: not_contains
+  - name: no-ai-summary
+    type: regex
+    pattern: 'deadlift|405'
+    flags: i
+    match: not_contains
+  - name: reads-october-monthly
+    type: regex
+    pattern: '65\s*x\s*10[\s\S]*70\s*x\s*8[\s\S]*70\s*x\s*6'
+  - name: reports-ignored-file
+    type: regex
+    pattern: 'ignored files:.*November 2026'
+    flags: i

@@ -1,0 +1,288 @@
+{
+ "activities": [
+  {
+   "id": "21159406739",
+   "name": "Evening Pickleball",
+   "sport_type": "Pickleball",
+   "start_local": "2026-09-30T20:20:13",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 6777,
+    "elapsed_time": 6777,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 30,
+    "total_calories": 954,
+    "kudos_count": 2,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "21148258638",
+   "name": "Evening Weight Training",
+   "sport_type": "WeightTraining",
+   "start_local": "2026-09-28T19:47:51",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 3864,
+    "elapsed_time": 3864,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 13,
+    "total_calories": 475,
+    "kudos_count": 1,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "21136172038",
+   "name": "Night Pickleball",
+   "sport_type": "Pickleball",
+   "start_local": "2026-09-24T21:05:02",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 8281,
+    "elapsed_time": 8281,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 43,
+    "total_calories": 902,
+    "kudos_count": 2,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "21123069554",
+   "name": "Evening Weight Training",
+   "sport_type": "WeightTraining",
+   "start_local": "2026-09-23T19:58:30",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 3425,
+    "elapsed_time": 3425,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 12,
+    "total_calories": 325,
+    "kudos_count": 0,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "21113273860",
+   "name": "Afternoon Tennis",
+   "sport_type": "Tennis",
+   "start_local": "2026-09-21T15:22:44",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 4391,
+    "elapsed_time": 4391,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 40,
+    "total_calories": 498,
+    "kudos_count": 2,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "21098524542",
+   "name": "Evening Run",
+   "description": "First run in a while 🥵",
+   "sport_type": "Run",
+   "start_local": "2026-09-19T18:41:07",
+   "is_trainer": true,
+   "summary": {
+    "distance": 5.02,
+    "moving_time": 1960,
+    "elapsed_time": 2120,
+    "elevation_gain": 0,
+    "avg_speed": 9.220408163265306,
+    "max_speed": 12.325646891524519,
+    "avg_pace": 390.4382470119522,
+    "avg_pace_display": "6:30 /km",
+    "max_pace": 292.0739196638407,
+    "max_pace_display": "4:52 /km",
+    "relative_effort": 52,
+    "total_calories": 246,
+    "kudos_count": 2,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "21087187211",
+   "name": "Evening Pickleball",
+   "sport_type": "Pickleball",
+   "start_local": "2026-09-16T20:48:19",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 7570,
+    "elapsed_time": 7570,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 50,
+    "total_calories": 739,
+    "kudos_count": 0,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "21072951737",
+   "name": "Evening Weight Training",
+   "sport_type": "WeightTraining",
+   "start_local": "2026-09-14T19:30:31",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 4197,
+    "elapsed_time": 4197,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 10,
+    "total_calories": 425,
+    "kudos_count": 1,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "21059010141",
+   "name": "Night Pickleball",
+   "description": "Post dinner session, way too full 😅",
+   "sport_type": "Pickleball",
+   "start_local": "2026-09-10T21:10:55",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 8378,
+    "elapsed_time": 8378,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 24,
+    "total_calories": 1139,
+    "kudos_count": 2,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "21046806702",
+   "name": "Evening Weight Training",
+   "sport_type": "WeightTraining",
+   "start_local": "2026-09-09T19:44:03",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 2921,
+    "elapsed_time": 2921,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 10,
+    "total_calories": 279,
+    "kudos_count": 0,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "21036423016",
+   "name": "Afternoon Pickleball",
+   "sport_type": "Pickleball",
+   "start_local": "2026-09-07T16:05:12",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 6554,
+    "elapsed_time": 6554,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 27,
+    "total_calories": 818,
+    "kudos_count": 0,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "21024419621",
+   "name": "Evening Pickleball",
+   "sport_type": "Pickleball",
+   "start_local": "2026-09-03T20:31:40",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 6082,
+    "elapsed_time": 6082,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 43,
+    "total_calories": 625,
+    "kudos_count": 0,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "21009896142",
+   "name": "Evening Weight Training",
+   "sport_type": "WeightTraining",
+   "start_local": "2026-09-02T19:52:10",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 4161,
+    "elapsed_time": 4161,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 17,
+    "total_calories": 441,
+    "kudos_count": 0,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  }
+ ],
+ "has_next_page": false,
+ "end_cursor": "WyIyMDI2LTA5LTAyVDE5OjUyOjEwIiwyMTAwOTg5NjE0Ml0=",
+ "value_units": {
+  "avg_pace": "seconds/km",
+  "avg_speed": "km/h",
+  "distance": "km",
+  "elapsed_time": "seconds",
+  "elevation_gain": "meters",
+  "max_pace": "seconds/km",
+  "max_speed": "km/h",
+  "moving_time": "seconds",
+  "relative_effort": "unitless",
+  "total_calories": "kilocalories",
+  "weather.feels_like": "celsius",
+  "weather.humidity": "percent",
+  "weather.temperature": "celsius",
+  "weather.wind_speed": "km/h"
+ }
+}

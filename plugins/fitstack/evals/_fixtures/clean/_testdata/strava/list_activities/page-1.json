@@ -1,0 +1,130 @@
+{
+ "activities": [
+  {
+   "id": "20000000005",
+   "name": "Evening Weight Training",
+   "sport_type": "WeightTraining",
+   "start_local": "2026-11-12T18:30:00",
+   "is_trainer": true,
+   "summary": {
+    "distance": 0,
+    "moving_time": 3300,
+    "elapsed_time": 3300,
+    "elevation_gain": 0,
+    "avg_speed": 0,
+    "max_speed": 0,
+    "relative_effort": 15,
+    "total_calories": 290,
+    "kudos_count": 0,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "20000000004",
+   "name": "Riverside Tempo",
+   "sport_type": "Run",
+   "start_local": "2026-11-11T07:05:00",
+   "is_trainer": false,
+   "summary": {
+    "distance": 6.2,
+    "moving_time": 1860,
+    "elapsed_time": 1860,
+    "elevation_gain": 12,
+    "avg_speed": 12.0,
+    "max_speed": 14.118,
+    "avg_pace": 300.0,
+    "avg_pace_display": "5:00 /km",
+    "max_pace": 255,
+    "max_pace_display": "4:15 /km",
+    "relative_effort": 48,
+    "total_calories": 410,
+    "kudos_count": 0,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "20000000003",
+   "name": "Harbor Loop",
+   "sport_type": "Ride",
+   "start_local": "2026-11-08T09:00:00",
+   "is_trainer": false,
+   "summary": {
+    "distance": 32.5,
+    "moving_time": 5400,
+    "elapsed_time": 5900,
+    "elevation_gain": 140,
+    "avg_speed": 21.667,
+    "max_speed": 38.2,
+    "relative_effort": 40,
+    "total_calories": 720,
+    "kudos_count": 0,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "20000000002",
+   "name": "Hill Repeats",
+   "sport_type": "Run",
+   "start_local": "2026-10-30T07:10:00",
+   "is_trainer": false,
+   "summary": {
+    "distance": 5.0,
+    "moving_time": 1650,
+    "elapsed_time": 1650,
+    "elevation_gain": 12,
+    "avg_speed": 10.909,
+    "max_speed": 15.0,
+    "avg_pace": 330.0,
+    "avg_pace_display": "5:30 /km",
+    "max_pace": 240,
+    "max_pace_display": "4:00 /km",
+    "relative_effort": 62,
+    "total_calories": 350,
+    "kudos_count": 0,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  },
+  {
+   "id": "20000000001",
+   "name": "Old Bridge Run",
+   "sport_type": "Run",
+   "start_local": "2026-10-05T08:00:00",
+   "is_trainer": false,
+   "summary": {
+    "distance": 8.0,
+    "moving_time": 2880,
+    "elapsed_time": 2880,
+    "elevation_gain": 12,
+    "avg_speed": 10.0,
+    "max_speed": 12.0,
+    "avg_pace": 360.0,
+    "avg_pace_display": "6:00 /km",
+    "max_pace": 300,
+    "max_pace_display": "5:00 /km",
+    "relative_effort": 55,
+    "total_calories": 560,
+    "kudos_count": 0,
+    "achievement_count": 0,
+    "pr_count": 0
+   }
+  }
+ ],
+ "has_next_page": false,
+ "end_cursor": "c3ludGhldGljLWVuZA==",
+ "value_units": {
+  "avg_pace": "seconds/km",
+  "avg_speed": "km/h",
+  "distance": "km",
+  "elapsed_time": "seconds",
+  "elevation_gain": "meters",
+  "max_pace": "seconds/km",
+  "max_speed": "km/h",
+  "moving_time": "seconds",
+  "relative_effort": "unitless",
+  "total_calories": "kilocalories"
+ }
+}

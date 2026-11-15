@@ -1,0 +1,38 @@
+schema_version: "1.1"
+name: user-asks-back-day
+description: A leg plan is pending, but the user asks for a back day. The user's request wins; the leg plan stays pending.
+tags: [user, next, request, messy]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 60
+  timeout_seconds: 1200
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: Feeling like doing back day today.
+graders:
+  - name: lat-pulldown
+    type: regex
+    pattern: 'pull\s*-?down'
+    flags: i
+  - name: row
+    type: regex
+    pattern: '\brow'
+    flags: i
+  - name: uses-last-back-numbers
+    type: regex
+    pattern: '145'
+  - name: plan-is-back
+    type: regex
+    pattern: '"focus"\s*:\s*"[^"]*(back|pull)'
+    flags: i
+  - name: judge-request-wins
+    type: llm
+    criteria: |
+      A leg plan (plan-2026-11-13-strength) is pending. The user asked for a back day.
+      Last back session (Nov 5): lat pulldown 125x8, 145x6, 145x5; low row 125x10, 145x7,
+      145x6, 145x6; dead hang 35s, 30s, 27s. That session's outcome was "modified" (below
+      plan), so the rules say repeat the achieved level rather than progress.
+      PASS if it gives a back session built on those numbers (held, or a very small step),
+      says the leg plan is still pending for later, and does not mark the leg plan skipped
+      or expired.
+      FAIL if it gives the leg plan, ignores the history, or cancels the leg plan.

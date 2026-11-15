@@ -26,7 +26,7 @@ graders:
     match: not_contains
   - name: reads-october-monthly
     type: regex
-    pattern: '65\s*x\s*10[\s\S]*70\s*x\s*8[\s\S]*70\s*x\s*6'
+    pattern: '65\s*[x×]\s*10[\s\S]*70\s*[x×]\s*8[\s\S]*70\s*[x×]\s*6'
   - name: reports-ignored-file
     type: regex
     pattern: 'ignored files:.*November 2026'

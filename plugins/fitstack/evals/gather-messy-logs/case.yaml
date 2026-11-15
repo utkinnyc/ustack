@@ -11,7 +11,7 @@ execution:
 graders:
   - name: shoulder-press-so-line
     type: regex
-    pattern: '90\s*x\s*6[\s\S]*90\s*x\s*5[\s\S]*80\s*x\s*8'
+    pattern: '90\s*[x×]\s*6[\s\S]*90\s*[x×]\s*5[\s\S]*80\s*[x×]\s*8'
   - name: dead-hang-seconds
     type: regex
     pattern: '35\s*(s\b|sec)[\s\S]*30\s*(s\b|sec)[\s\S]*27\s*(s\b|sec)'

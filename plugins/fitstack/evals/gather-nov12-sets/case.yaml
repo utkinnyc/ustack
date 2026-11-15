@@ -11,13 +11,13 @@ execution:
 graders:
   - name: incline-press
     type: regex
-    pattern: '50\s*x\s*10[\s\S]*55\s*x\s*8[\s\S]*55\s*x\s*7'
+    pattern: '50\s*[x×]\s*10[\s\S]*55\s*[x×]\s*8[\s\S]*55\s*[x×]\s*7'
   - name: cable-row-3x12-expanded
     type: regex
-    pattern: '90\s*(lbs?)?\s*x\s*12[\s\S]*90\s*(lbs?)?\s*x\s*12[\s\S]*90\s*(lbs?)?\s*x\s*12'
+    pattern: '90\s*(lbs?)?\s*[x×]\s*12[\s\S]*90\s*(lbs?)?\s*[x×]\s*12[\s\S]*90\s*(lbs?)?\s*[x×]\s*12'
   - name: face-pulls-expanded
     type: regex
-    pattern: '40\s*x\s*15[\s\S]*40\s*x\s*15[\s\S]*40\s*x\s*12'
+    pattern: '40\s*[x×]\s*15[\s\S]*40\s*[x×]\s*15[\s\S]*40\s*[x×]\s*12'
   - name: shoulder-note-kept
     type: regex
     pattern: 'shoulder a bit tight'
@@ -35,8 +35,10 @@ graders:
       - Leg extension: 100lb x12, 110lb x10
       - Face pulls: 40x15, 40x15, 40x12
       - Note: "Left shoulder a bit tight at the end of the session."
+      Strava also has this session: start 18:30, 55 min, relative effort 15, 290 kcal.
+      Showing those Strava numbers is correct.
       PASS if the response lists all four exercises with every set above, keeps the note,
-      and adds no numbers that are not in the log (no totals, volume, averages or invented
-      heart rate).
+      and adds no numbers that are in neither source (no totals, volume, averages or
+      heart rate it computed or made up).
       FAIL if any exercise or set is missing or wrong, the note is dropped, or numbers are
       invented.

@@ -25,7 +25,7 @@ graders:
     pattern: '(?=[\s\S]*WOULD WRITE)(?=[\s\S]*config\.md)(?=[\s\S]*goals\.md)(?=[\s\S]*state\.jsonl)(?=[\s\S]*personal-rules\.md)'
   - name: goals-from-prompt
     type: regex
-    pattern: '(?=[\s\S]*half marathon)(?=[\s\S]*2027-04)(?=[\s\S]*155\s*x\s*5)'
+    pattern: '(?=[\s\S]*half marathon)(?=[\s\S]*2027-04)(?=[\s\S]*155\s*[x×]\s*5)'
     flags: i
   - name: judge-first-run
     type: llm

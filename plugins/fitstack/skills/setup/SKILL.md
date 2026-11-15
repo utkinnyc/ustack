@@ -19,6 +19,10 @@ section 2.
   follow-up only if a goal still has no target or date.
 - **Works with no data.** If there are no logs and Strava is unavailable, setup still
   completes. It writes no baselines, and the first plan uses the no-history defaults.
+- **Test mode** (agent-rules rule 5): with `strava_snapshot`, read the athlete profile
+  from the snapshot's `get_athlete_profile.json` instead of calling Strava. With
+  `dry_run`, create no folder or file; list every file and its full content under
+  `WOULD WRITE`, and continue the steps as if they had been written.
 
 ## Steps
 

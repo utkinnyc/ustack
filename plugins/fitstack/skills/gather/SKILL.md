@@ -15,6 +15,8 @@ Rules: [agent-rules](../../reference/agent-rules.md), [config](../../reference/c
    - The fitstack folder's absolute path.
    - `daily_logs` and `monthly_logs`: the config's values as absolute paths.
    - `focus`, if the caller gave one (e.g. "runs, with splits and heart rate").
+   - In test mode (agent-rules rule 5): `today`, and `strava_snapshot` as an absolute
+     path, from `test-mode.md`.
 3. **If the agent tool is unavailable,** do the agent's steps yourself (see
    `../../agents/data-gatherer.md`) and keep the same output format.
 4. **Return the agent's output unchanged.** If the user asked directly, show it and add

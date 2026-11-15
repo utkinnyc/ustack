@@ -21,7 +21,10 @@ Back Day 💪
 4. Dead Hang: 30 sec ×3
 ```
 
-3. Send with the Inkbox `inkbox_imessage_send` tool, reusing the existing conversation
+3. **Dry run** (agent-rules rule 5): do not send, and do not save a number to the
+   config. Show the message and the number it would go to under `WOULD WRITE`, then
+   stop.
+4. Send with the Inkbox `inkbox_imessage_send` tool, reusing the existing conversation
    with that number if one is listed.
-4. If the send fails with `imessage_awaiting_inbound`, ask the user to text `START` to
+5. If the send fails with `imessage_awaiting_inbound`, ask the user to text `START` to
    the agent's line. Report a `pending` status as sent but unconfirmed.

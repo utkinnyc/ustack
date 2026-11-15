@@ -15,6 +15,23 @@ Use the first that applies:
 The config is always `<fitstack folder>/AgentReferences/config.md`. Every path in it is
 relative to the fitstack folder.
 
+## Test mode
+
+Test mode is on when the fitstack folder has a file named `test-mode.md` at its root.
+Real folders never have one. Read it right after finding the folder, before anything
+else:
+
+```markdown
+# fitstack test mode
+
+- today: 2026-11-14              # the date to run as, instead of the real date
+- strava_snapshot: _testdata/strava   # read Strava from these files, not the connector
+- dry_run: true                  # write and send nothing; show it instead
+```
+
+Every setting is optional. A setting that is absent behaves as in normal mode. The
+rules for each setting are in [agent-rules](agent-rules.md) rule 5.
+
 ## Expected layout
 
 ```

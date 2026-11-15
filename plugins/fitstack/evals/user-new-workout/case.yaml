@@ -1,7 +1,7 @@
 schema_version: "1.1"
 name: user-new-workout
-description: No pending plan. next picks a session from the rotation, the week and yesterday's 3-hour pickleball, with targets from the last numbers.
-tags: [user, next, messy]
+description: No pending plan. next picks a session from the rotation, the week and yesterday's 3-hour pickleball; the card's targets follow the last numbers.
+tags: [user, next, card, messy]
 context:
   scaffold_script: setup.sh
 execution:
@@ -14,20 +14,38 @@ graders:
     type: tool_order
     before: { tool: Skill, input_match: '"skill"\s*:\s*"(?:[\w-]+:)?fitcheck"' }
     after: { tool: Skill, input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(strength|run|ride|swim)"' }
-  - name: would-write-plan
+  - name: would-write-plan-with-reason
     type: regex
-    pattern: 'WOULD WRITE[\s\S]*"type"\s*:\s*"plan"'
-  - name: targets-show-last
+    pattern: 'WOULD WRITE[\s\S]*"type"\s*:\s*"plan"[^\n]*"reason"'
+  - name: card-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?card"'
+  - name: no-fluff-markers
     type: regex
-    pattern: '\(\s*last'
+    pattern: 'why this session|data notes|\(\s*last\b'
     flags: i
+    match: not_contains
+  - name: reply-is-card
+    type: llm
+    criteria: |
+      Ignore a first line starting "TEST MODE" and a final "WOULD WRITE" section; they are
+      for testing. Judge only what is between them.
+      PASS if that part is only a workout card: a short title, numbered exercises or
+      segments with their targets, at most one line starting with ⚠, and (on a first run
+      only) one line about setup.
+      FAIL if it also has reasons, assumptions, data notes, warm-up or cool-down, last
+      session numbers, alternatives, goal or milestone status, or questions.
   - name: judge-sensible-pick
     type: llm
     criteria: |
-      Context: today is Sat Nov 14. Legs were trained Nov 11, push Nov 12, pull last on Nov 5.
-      The user played 3 hours of pickleball on Nov 13 ("legs are cooked"), which counts as
-      a hard leg day. Goal 1 is a half marathon (Apr 2027), goal 2 is squat 155x5.
-      PASS if today's session is not a hard leg session, follows from that history (e.g. a
-      pull session, or an easy run, with the reason given), and its targets are one small
-      step from, or equal to, the last numbers it shows.
-      FAIL if it prescribes heavy legs, ignores the history, or invents numbers.
+      Today is Sat Nov 14. Last sessions: legs Nov 11 (RDL 135x8, 145x6, 145x6; barbell
+      squat 135x6, 135x6, 140x4), push Nov 12 (chest press 90x10, 100x8, 100x7; shoulder
+      press 90x8, 90x8, 90x7; lateral raise 22.5x10, 22.5x9, 22.5x7, 20x8), pull Nov 5 (lat
+      pulldown 125x8, 145x6, 145x5; low row 125x10, 145x7, 145x6, 145x6). Runs: Nov 10
+      4.11 km at 6:16/km, Nov 7 7.42 km at 6:19/km. The user played 3 hours of pickleball
+      on Nov 13 ("legs are cooked"), a hard leg day.
+      PASS if today's card is not a hard leg session, follows from that history (e.g. a
+      pull session, or an easy run), its targets are equal to or one small step from
+      those numbers, and the plan's reason in WOULD WRITE explains the pick.
+      FAIL if it prescribes heavy legs, ignores the history, or its numbers match nothing above.

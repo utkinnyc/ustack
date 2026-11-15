@@ -69,6 +69,11 @@ history of plans and outcomes. `--new-user` removes `AgentReferences/` for a fir
 Every fixture has `dry_run: true`, so checks read the `WOULD WRITE` section of the reply
 instead of files.
 
+**Every workout case** (all `user-*` except `user-updates-goals`) also checks the reply
+is only a card: `card-used` (the card skill ran), `no-fluff-markers` (no "why this
+session", "data notes" or "(last"), and `reply-is-card` (an AI judge). The reasoning is
+not on the card, so checks about it read the plan's `reason` in `WOULD WRITE`.
+
 ## Adding a case
 
 Copy a case folder, then change `name`, `prompt` and `graders` in `case.yaml`. For a

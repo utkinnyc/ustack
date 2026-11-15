@@ -1,7 +1,7 @@
 schema_version: "1.1"
 name: user-no-legs
-description: The user asks for a workout with no leg exercises. A full upper-body session from their history.
-tags: [user, next, request, messy]
+description: The user asks for a workout with no leg exercises. The card is a 3-5 exercise upper-body session from their history.
+tags: [user, next, request, card, messy]
 context:
   scaffold_script: setup.sh
 execution:
@@ -14,15 +14,36 @@ graders:
     type: regex
     pattern: '"focus"\s*:\s*"(?![^"]*leg)'
     flags: i
-  - name: targets-show-last
+  - name: card-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?card"'
+  - name: no-fluff-markers
     type: regex
-    pattern: '\(\s*last'
+    pattern: 'why this session|data notes|\(\s*last\b'
     flags: i
+    match: not_contains
+  - name: reply-is-card
+    type: llm
+    criteria: |
+      Ignore a first line starting "TEST MODE" and a final "WOULD WRITE" section; they are
+      for testing. Judge only what is between them.
+      PASS if that part is only a workout card: a short title, numbered exercises or
+      segments with their targets, at most one line starting with ⚠, and (on a first run
+      only) one line about setup.
+      FAIL if it also has reasons, assumptions, data notes, warm-up or cool-down, last
+      session numbers, alternatives, goal or milestone status, or questions.
   - name: judge-no-legs
     type: llm
     criteria: |
-      PASS if the session's exercises include no squats, lunges, RDLs, deadlifts, leg
-      press, leg extension, leg curl or calf raises (mentioning that legs are skipped is
-      fine), it is a complete session of 3-5 exercises, and its targets come from the
-      user's last numbers for those exercises (e.g. pull from Nov 5, push from Nov 12).
-      FAIL if any leg exercise is prescribed, or numbers are invented.
+      Last upper-body numbers: pull Nov 5 (lat pulldown 125x8, 145x6, 145x5; low row 125x10,
+      145x7, 145x6, 145x6; dead hang 35s, 30s, 27s), push Nov 12 (chest press 90x10, 100x8,
+      100x7; lateral raise 22.5x10, 22.5x9, 22.5x7, 20x8; shoulder press 90x8, 90x8, 90x7;
+      bicep curl machine 50x12, 55x9, 60x6), Nov 4 (hammer curl 25x9, 25x7, 25x6 each side;
+      incline bench 75x10, 85x8, 85x7; triceps push down 120x10, 120x9, 130x6), Oct 16
+      (rear delt fly 65x10, 70x8, 70x7).
+      PASS if the card has no squats, lunges, RDLs, deadlifts, leg press, leg extension,
+      leg curl or calf raises, has 3-5 exercises in total, and its targets are equal to or
+      one small step from those numbers.
+      FAIL if any leg exercise is prescribed, it has more than 5 or fewer than 3 exercises,
+      or its numbers match nothing above.

@@ -43,8 +43,9 @@ NOTES: <form cue, fuelling, rehab swaps, missing data; or "none">
 PLAN: <the `plan` record for the state log, as one JSON line>
 ```
 
-- Called by `next`: return the block. `next` presents it and writes the plan record.
-- Called directly by the user: present the block (without the `PLAN` line), then append
-  the plan record to the state log yourself.
-- If the user asked about past sessions, add up to three analysis bullets after the
-  block.
+- Called by `next`: return the block. `next` writes the plan record and presents it
+  with `card`.
+- Called directly by the user: append the plan record to the state log yourself, then
+  invoke `card` with the session. The block is never shown to the user.
+- If the user asked about past sessions (not for a workout), answer in up to three
+  short bullets instead of a card.

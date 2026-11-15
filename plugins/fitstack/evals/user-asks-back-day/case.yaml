@@ -1,7 +1,7 @@
 schema_version: "1.1"
 name: user-asks-back-day
-description: A leg plan is pending, but the user asks for a back day. The user's request wins; the leg plan stays pending.
-tags: [user, next, request, messy]
+description: A leg plan is pending, but the user asks for a back day. The card is a back session; the leg plan stays pending.
+tags: [user, next, request, card, messy]
 context:
   scaffold_script: setup.sh
 execution:
@@ -25,14 +25,36 @@ graders:
     type: regex
     pattern: '"focus"\s*:\s*"[^"]*(back|pull)'
     flags: i
+  - name: leg-plan-not-closed
+    type: regex
+    pattern: 'plan-2026-11-13-strength[^\n]*"status"\s*:\s*"(skipped|expired)"|"status"\s*:\s*"(skipped|expired)"[^\n]*plan-2026-11-13-strength'
+    match: not_contains
+  - name: card-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?card"'
+  - name: no-fluff-markers
+    type: regex
+    pattern: 'why this session|data notes|\(\s*last\b'
+    flags: i
+    match: not_contains
+  - name: reply-is-card
+    type: llm
+    criteria: |
+      Ignore a first line starting "TEST MODE" and a final "WOULD WRITE" section; they are
+      for testing. Judge only what is between them.
+      PASS if that part is only a workout card: a short title, numbered exercises or
+      segments with their targets, at most one line starting with ⚠, and (on a first run
+      only) one line about setup.
+      FAIL if it also has reasons, assumptions, data notes, warm-up or cool-down, last
+      session numbers, alternatives, goal or milestone status, or questions.
   - name: judge-request-wins
     type: llm
     criteria: |
       A leg plan (plan-2026-11-13-strength) is pending. The user asked for a back day.
       Last back session (Nov 5): lat pulldown 125x8, 145x6, 145x5; low row 125x10, 145x7,
-      145x6, 145x6; dead hang 35s, 30s, 27s. That session's outcome was "modified" (below
-      plan), so the rules say repeat the achieved level rather than progress.
-      PASS if it gives a back session built on those numbers (held, or a very small step),
-      says the leg plan is still pending for later, and does not mark the leg plan skipped
-      or expired.
-      FAIL if it gives the leg plan, ignores the history, or cancels the leg plan.
+      145x6, 145x6; dead hang 35s, 30s, 27s. That session was below plan, so the rules say
+      repeat the achieved level rather than progress.
+      PASS if the card is a back session built on those numbers (held, or a very small
+      step) and WOULD WRITE does not close the leg plan (no skipped or expired outcome).
+      FAIL if it gives the leg plan, ignores the history, or closes the leg plan.

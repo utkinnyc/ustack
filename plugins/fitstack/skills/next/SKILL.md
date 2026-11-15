@@ -20,12 +20,12 @@ Read first: [agent-rules](../../reference/agent-rules.md), [config](../../refere
 2. **Gather.** Invoke `gather` with the default window. If the user asked about a
    specific sport or exercise, pass it as the focus.
 3. **Fitcheck.** Invoke `fitcheck`. It asks the user nothing. If it reports a **RED
-   FLAG**: no workout. Say why, recommend a doctor or physiotherapist, and stop.
+   FLAG**: no workout. Invoke `card` with the red flag, and stop.
 4. **Decide what comes next**, in this order (training-rules section 3):
    1. **The user asked for something specific or different** → that. Build it in the
       context of their state, goals and recent training. Honor it unless it breaks
-      training-rules section 1; if it breaks another rule, say which one and why. Any
-      pending plan stays pending.
+      training-rules section 1; if it breaks another rule, note which one in the plan's
+      `reason` (the user sees it if they ask "why"). Any pending plan stays pending.
    2. **A plan is pending** (fitcheck lists it) → give it again as "pending since
       <the plan's `for` day>" (training-rules section 3). If fitcheck's pain or
       constraints affect it, adjust it.
@@ -34,20 +34,15 @@ Read first: [agent-rules](../../reference/agent-rules.md), [config](../../refere
 5. **Get the session.** Invoke the matching sport skill (`strength`, `run`, `ride` or
    `swim`) with the day type and constraints. If fitcheck found pain or an open injury,
    also invoke `rehab` and apply its `AVOID`, `ADD` and `SWAP`.
-6. **Present**, in this order:
-   - Fitcheck's assumptions in one line (e.g. "Treating left knee as still sore. Tell me
-     if it's better.").
-   - If it is a pending plan: "Pending since <day>".
-   - Why this session (the sport skill's `WHY`), with the milestone status.
-   - The session: warm-up, main work with targets (last numbers in parentheses),
-     cool-down, notes.
-   - Data notes: sources that could not be fetched, ignored files, conflicts.
-7. **Remember.** Append the `plan` record. For an adjusted pending plan, use the same
-   `id`.
-8. **Text it** only if the user asks: invoke `text-me` with the session.
+6. **Remember.** Append the `plan` record. For an adjusted pending plan, use the same
+   `id`. Put the reasoning in its `reason` (the sport skill's `WHY`, fitcheck's
+   assumptions, rehab's changes), so "why" can be answered later.
+7. **Present with `card`.** Invoke `card` with the session (after rehab's swaps), the
+   pending day if it is a pending plan, and any pain or injury restriction. Your reply
+   is only card's output: no reasons, data notes, assumptions or summaries of the steps
+   above. `card` also texts the user if they set that up.
 
 ## Week plan
 
 When the user asks for a week: repeat steps 4.3–5 for each day, keeping the load rules
-across days. Present a 7-row table (day, session, key targets) and append one `plan`
-record per day.
+across days. Append one `plan` record per day, then invoke `card` with the week.

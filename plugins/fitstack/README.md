@@ -89,7 +89,8 @@ It never overwrites files that already exist. Then you get your first workout.
 | `strength` | Next lift session: from your history, on request ("chest day"), or a full-body default. |
 | `run` · `ride` · `swim` | Analyze recent sessions and recommend the next one. |
 | `rehab` | Works around pain and form problems: what to avoid, what to strengthen, what to swap. |
-| `text-me` | Texts you the plan over iMessage, via Inkbox. |
+| `card` | The last step: shows only the workout card, and texts it if you chose that in setup. Say "why" for the reasoning. |
+| `text-me` | Texts you the card over iMessage, via Inkbox. |
 | `nutrition` | Under development. |
 
 You can call any skill directly, e.g. `/fitstack:run` to ask about your last run.
@@ -104,7 +105,7 @@ next ─┬─ setup        (first run only)
       ├─ gather ──── data-gatherer agent (logs, Strava, Apple Health)
       ├─ fitcheck     (past plans → outcomes, injuries, red flags)
       ├─ strength · run · ride · swim   (+ rehab when there's pain)
-      └─ text-me      (only if you ask)
+      └─ card         (the reply: just the workout) ── text-me (if you chose texts)
 ```
 
 Every sport skill has the same shape: inputs (your data, fitcheck, goals), analysis

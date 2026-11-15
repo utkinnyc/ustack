@@ -1,7 +1,7 @@
 schema_version: "1.1"
 name: user-pending-expired
-description: A swim planned for Nov 8 was never done and is now more than 5 days old. It is marked expired and a fresh plan is given.
-tags: [user, next, pending, messy]
+description: A swim planned for Nov 8 was never done and is more than 5 days old. It is recorded as expired, and the card is a fresh session.
+tags: [user, next, pending, card, messy]
 context:
   scaffold_script: setup.sh
 execution:
@@ -10,17 +10,37 @@ execution:
   allowed_tools: [Read, Glob, Grep, Skill, Agent]
   prompt: What should I do today?
 graders:
-  - name: says-expired
-    type: regex
-    pattern: 'expired'
-    flags: i
   - name: would-write-expired-outcome
     type: regex
     pattern: 'plan-2026-11-08-swim[^\n]*"status"\s*:\s*"expired"|"status"\s*:\s*"expired"[^\n]*plan-2026-11-08-swim'
+  - name: not-given-as-pending
+    type: regex
+    pattern: 'pending since'
+    flags: i
+    match: not_contains
+  - name: card-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?card"'
+  - name: no-fluff-markers
+    type: regex
+    pattern: 'why this session|data notes|\(\s*last\b'
+    flags: i
+    match: not_contains
+  - name: reply-is-card
+    type: llm
+    criteria: |
+      Ignore a first line starting "TEST MODE" and a final "WOULD WRITE" section; they are
+      for testing. Judge only what is between them.
+      PASS if that part is only a workout card: a short title, numbered exercises or
+      segments with their targets, at most one line starting with ⚠, and (on a first run
+      only) one line about setup.
+      FAIL if it also has reasons, assumptions, data notes, warm-up or cool-down, last
+      session numbers, alternatives, goal or milestone status, or questions.
   - name: judge-expired
     type: llm
     criteria: |
       A swim plan for Nov 8 was never done; today is Nov 14 (6 days later).
-      PASS if the response treats the swim as expired (not pending), does not give it again
-      as "pending since", and gives a fresh session for today.
+      PASS if WOULD WRITE records it as expired, the card is not that swim given again as
+      pending, and the card is a fresh session for today.
       FAIL otherwise.

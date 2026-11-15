@@ -38,7 +38,7 @@ jobs:
           if git diff --quiet; then echo "Versions already correct: $SUMMARY"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -am "Bump plugin versions: $SUMMARY"
+          git commit -am "Bump plugin versions: $SUMMARY [skip ci]"
           git push
 
       - name: Report status on the final commit

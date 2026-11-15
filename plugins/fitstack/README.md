@@ -129,10 +129,10 @@ shared rules are in [`reference/`](reference/):
 
 ## Status
 
-Version 1.0.0, being tested. Nutrition tracking is not built yet, and Apple Health
+Being tested. Nutrition tracking is not built yet, and Apple Health
 depends on the app running Claude exposing it. Issues and suggestions are welcome.
 
 ## Adding a skill
 
-Create `skills/<name>/SKILL.md` and bump `version` in `.claude-plugin/plugin.json`. A
-sport skill should follow [`skill-format.md`](reference/skill-format.md).
+Create `skills/<name>/SKILL.md` and open a PR; the version is bumped for you (see the
+[root README](../../README.md#contributing)). A sport skill should follow [`skill-format.md`](reference/skill-format.md).

@@ -1,0 +1,55 @@
+name: version-bump
+
+# On every PR: bump the version of each changed plugin (see .github/scripts/bump_versions.py),
+# commit it to the PR branch, then report a "version-bump" status on the final commit.
+# main's ruleset requires that status, so a PR cannot merge without a correct version.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
+
+concurrency:
+  group: version-bump-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write   # push the bump commit to the PR branch
+  statuses: write   # report the version-bump status
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Bump versions of changed plugins
+        id: bump
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+        run: echo "summary=$(python3 .github/scripts/bump_versions.py)" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push the bump
+        env:
+          SUMMARY: ${{ steps.bump.outputs.summary }}
+        run: |
+          if git diff --quiet; then echo "Versions already correct: $SUMMARY"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Bump plugin versions: $SUMMARY"
+          git push
+
+      - name: Report status on the final commit
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATE: ${{ job.status == 'success' && 'success' || 'failure' }}
+          SUMMARY: ${{ steps.bump.outputs.summary }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          sha=$(git rev-parse HEAD 2>/dev/null || echo "$HEAD_SHA")
+          desc="${SUMMARY:-version bump failed, see the workflow log}"
+          gh api "repos/${{ github.repository }}/statuses/$sha" \
+            -f state="$STATE" -f context=version-bump -f description="${desc:0:140}"

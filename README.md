@@ -27,4 +27,14 @@ Each plugin's README covers its setup and skills.
 2. Add an entry to the `plugins` array in `.claude-plugin/marketplace.json`.
 3. Add a row to the table above.
 
-**Change a plugin:** bump `version` in its `plugin.json`, so installed copies update.
+**Change a plugin:** open a PR to `main` (direct pushes are blocked). A workflow bumps
+the `version` of every plugin the PR changes, so installed copies update, and the PR
+can't merge until its `version-bump` check passes. The PR title picks the bump:
+
+| PR title | Bump | Use for |
+|---|---|---|
+| `fix: ...`, `docs: ...`, anything else | patch, 1.1.0 → 1.1.1 | fixes and wording |
+| `feat: ...` | minor, 1.1.0 → 1.2.0 | something new that changes nothing for existing users |
+| `feat!: ...`, `fix!: ...` | major, 1.1.0 → 2.0.0 | something users rely on changed or was removed |
+
+A `major`, `minor` or `patch` label on the PR overrides the title.

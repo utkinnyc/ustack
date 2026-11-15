@@ -19,15 +19,14 @@ score or a feeling.
 
 ## Steps
 
-1. **Judge past plans** (training-rules section 3). For each pending plan whose day has
-   passed:
-   - Look in the gather output for a workout of that sport between the plan's day and
-     today that no other plan has claimed.
-   - Found → append an `outcome` record: `as_planned`, `modified` or `substituted`, with
-     the diffs. Add any notes on that workout as `feedback`.
-   - Not found, 5 days or less → still pending.
-   - Not found, more than 5 days → append an `outcome` with status `expired`.
+1. **Judge open plans** (training-rules section 3), including a plan for today:
+   - Look in the gather output for a matching workout from the plan's day up to and
+     including today, matched by sport and focus as the table in section 3 says.
+   - Found → append an `outcome` record with the status from that table and the diffs.
+     Add any notes on that workout as `feedback`.
+   - Not found → still pending, or `expired` after 5 days.
    - The user said they skipped it → `skipped`.
+   - A plan for today that is now done → report `done today: <plan id>`.
 2. **Collect pain and form signals:**
    - Open `injury` records. They stay open, with their restrictions, unless the user
      said the area is better.
@@ -52,6 +51,7 @@ pain: <area, score or "no score", since <date>, source> | none
 assuming: <what was carried forward, e.g. "left knee still sore (open since Nov 10)"> | nothing
 pending plan: <id>, pending since <the plan's `for` day> | none
 outcomes: <plan id → status, key diff>, ... | none
+done today: <plan id, or the workout logged today> | no
 constraints: <from the user's messages> | none
 ```
 

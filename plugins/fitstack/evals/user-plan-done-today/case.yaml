@@ -1,0 +1,58 @@
+schema_version: "1.1"
+name: user-plan-done-today
+description: Today's back plan is already in today's log. It is judged done, and the card is tomorrow's session, not the same plan again.
+tags: [user, next, outcome, card, messy]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 60
+  timeout_seconds: 1200
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: What should I do today?
+graders:
+  - name: outcome-done
+    type: regex
+    pattern: 'plan-2026-11-14-strength[^\n]*"status"\s*:\s*"(as_planned|modified)"|"status"\s*:\s*"(as_planned|modified)"[^\n]*plan-2026-11-14-strength'
+  - name: not-pending
+    type: regex
+    pattern: 'pending since'
+    flags: i
+    match: not_contains
+  - name: says-done-today
+    type: regex
+    pattern: 'done today'
+    flags: i
+  - name: card-is-for-tomorrow
+    type: regex
+    pattern: 'tomorrow'
+    flags: i
+  - name: new-plan-for-nov15
+    type: regex
+    pattern: '"type"\s*:\s*"plan"[^\n]*"for"\s*:\s*"2026-11-15"'
+  - name: card-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?card"'
+  - name: no-fluff-markers
+    type: regex
+    pattern: 'why this session|data notes|\(\s*last\b'
+    flags: i
+    match: not_contains
+  - name: reply-is-card
+    type: llm
+    criteria: |
+      Ignore a first line starting "TEST MODE" and a final "WOULD WRITE" section; they are
+      for testing. Judge only what is between them.
+      PASS if that part is only a workout card: an optional "Done today ✓" line, a short
+      title, numbered exercises or segments with their targets, and at most one line
+      starting with ⚠.
+      FAIL if it also has reasons, assumptions, data notes, warm-up or cool-down, last
+      session numbers, alternatives, goal or milestone status, or questions.
+  - name: judge-next-not-repeat
+    type: llm
+    criteria: |
+      Today (Nov 14) the user already did the planned back session (lat pulldown 125x8,
+      145x6, 145x6; low row 125x10, 145x7, 145x6; rear delt fly 70x8, 70x8, 70x7).
+      PASS if the reply does not give the back session again, says today is done, and
+      gives a session for tomorrow (Nov 15) that is not another back day.
+      FAIL if it repeats the back plan, treats it as pending, or plans a second session today.

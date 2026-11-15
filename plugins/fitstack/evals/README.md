@@ -65,6 +65,9 @@ history of plans and outcomes. `--new-user` removes `AgentReferences/` for a fir
 | `user-updates-goals` | messy | Add a 10K under 55 min by March 2027. | old goals kept; priorities; milestones proposed |
 | `user-wants-run` | messy | I want to run today. | a run sized from real runs |
 | `user-no-legs` | messy | ... no leg exercises. | an upper-body session from history |
+| `user-plan-done-today` | messy + today's back plan + today's log of it | What should I do today? | judged done; "Done today ✓"; the card is for tomorrow |
+| `user-plan-done-other-exercises` | messy + back plan + pull-ups, cable row | What should I do today? | same muscles → modified, counts as done |
+| `user-plan-substituted` | messy + back plan + a chest log | What should I do today? | substituted; the back day is tomorrow's card |
 
 Every fixture has `dry_run: true`, so checks read the `WOULD WRITE` section of the reply
 instead of files.

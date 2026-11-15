@@ -22,6 +22,10 @@ Read first: [agent-rules](../../reference/agent-rules.md), [config](../../refere
 3. **Fitcheck.** Invoke `fitcheck`. It asks the user nothing. If it reports a **RED
    FLAG**: no workout. Invoke `card` with the red flag, and stop.
 4. **Decide what comes next**, in this order (training-rules section 3):
+   0. **Today's training is already done** (fitcheck reports `done today`, or the gather
+      output has a workout today that fully covers what today called for) → plan
+      tomorrow's session instead, with `for` set to tomorrow, unless the user asked
+      for a second session today. Tell `card` it is for tomorrow.
    1. **The user asked for something specific or different** → that. Build it in the
       context of their state, goals and recent training. Honor it unless it breaks
       training-rules section 1; if it breaks another rule, note which one in the plan's

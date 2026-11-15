@@ -1,0 +1,59 @@
+schema_version: "1.1"
+name: user-plan-done-other-exercises
+description: Today's back plan was done with different back exercises (pull-ups, cable row, face pulls). Same muscles, so it counts as done (modified), and the card is for tomorrow.
+tags: [user, next, outcome, card, messy]
+context:
+  scaffold_script: setup.sh
+execution:
+  max_turns: 60
+  timeout_seconds: 1200
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: What should I do today?
+graders:
+  - name: outcome-modified
+    type: regex
+    pattern: 'plan-2026-11-14-strength[^\n]*"status"\s*:\s*"modified"|"status"\s*:\s*"modified"[^\n]*plan-2026-11-14-strength'
+  - name: not-pending
+    type: regex
+    pattern: 'pending since'
+    flags: i
+    match: not_contains
+  - name: says-done-today
+    type: regex
+    pattern: 'done today'
+    flags: i
+  - name: card-is-for-tomorrow
+    type: regex
+    pattern: 'tomorrow'
+    flags: i
+  - name: new-plan-for-nov15
+    type: regex
+    pattern: '"type"\s*:\s*"plan"[^\n]*"for"\s*:\s*"2026-11-15"'
+  - name: card-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?card"'
+  - name: no-fluff-markers
+    type: regex
+    pattern: 'why this session|data notes|\(\s*last\b'
+    flags: i
+    match: not_contains
+  - name: reply-is-card
+    type: llm
+    criteria: |
+      Ignore a first line starting "TEST MODE" and a final "WOULD WRITE" section; they are
+      for testing. Judge only what is between them.
+      PASS if that part is only a workout card: an optional "Done today ✓" line, a short
+      title, numbered exercises or segments with their targets, and at most one line
+      starting with ⚠.
+      FAIL if it also has reasons, assumptions, data notes, warm-up or cool-down, last
+      session numbers, alternatives, goal or milestone status, or questions.
+  - name: judge-same-muscles-counts
+    type: llm
+    criteria: |
+      The plan for today was a back day (lat pulldown, low row, rear delt fly). Today's log
+      has pull-ups BW x8, x6, x5; cable row 120x10, 130x8, 130x8; face pulls 40x15, 45x12.
+      Those train the same muscles.
+      PASS if it treats the back plan as done (modified, not substituted or pending) and
+      gives a session for tomorrow (Nov 15) that is not another back day.
+      FAIL if it repeats the back plan, calls it substituted, or treats it as not done.

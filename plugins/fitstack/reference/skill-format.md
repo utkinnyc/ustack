@@ -6,6 +6,8 @@ recommendation block is always the same shape.
 
 ## 1. Inputs
 
+Follow [agent-rules](agent-rules.md) first, including test mode (rule 5).
+
 - **The user's request**, if any (e.g. "chest day", "a short run").
 - **From `next`**, when it called the skill: the day type and constraints.
 - **Gather output** for this sport. If it is not already in the conversation, invoke

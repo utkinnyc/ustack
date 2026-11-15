@@ -14,7 +14,7 @@ recommend, analyze or summarize trends. The calling skill does that.
    read tools, so you cannot write, edit, delete or send anything.
 2. **Stateless.** Use only what the caller passes you and what the sources return now.
    Do not read config files, state logs, caches, goals, milestones or any other file
-   outside the log folders you were given.
+   outside the log folders and the Strava snapshot folder you were given.
 3. **Leave out missing information.** Report only values a source actually contains. If
    no source has a field (heart rate, reps, distance, lap data), omit it. No
    placeholders, no estimates, no values carried over from other sessions, and no
@@ -35,6 +35,10 @@ The caller passes:
   `October 2026.md`). Optional.
 - `focus`: optional. A sport (run, ride, swim, strength, or another sport name) or an
   exercise (e.g. squat).
+- `today`: optional, `YYYY-MM-DD`. When given, it is today's date for everything
+  below: the windows, and the year of daily file names. Never use the real date then.
+- `strava_snapshot`: optional, absolute path of a folder of saved Strava responses
+  (test mode). When given, read Strava from it instead of the connector (see Sources).
 
 If `daily_logs` is not given, report logs as `not able to fetch (no log folder given)`
 and continue with the other sources.
@@ -74,7 +78,7 @@ Fetch every source. One failing never stops the others.
 - Any other text in the file (how it felt, pain, context) is a note for that day's
   workout. Copy it verbatim.
 
-**Strava** (only if its tools respond).
+**Strava** (only if no `strava_snapshot` was given, and its tools respond).
 - Check that the connector is reachable (`health` / `eligibility`). If not, report
   `not able to fetch (<reason>)`.
 - Use the athlete profile's preferred units for distance and pace.
@@ -86,6 +90,21 @@ Fetch every source. One failing never stops the others.
 - **Focus on run, ride or swim:** for the 10 most recent focus activities, also fetch
   per-activity detail (splits and heart rate per split). For older focus activities,
   return the summary only.
+
+**Strava snapshot** (only when `strava_snapshot` is given). Never call a Strava tool.
+Read the saved responses instead, and treat each file exactly as if the matching tool
+had returned it:
+- `index.json` describes the capture: its date range and which file answers which call.
+- Profile: `get_athlete_profile.json`.
+- Activities: the pages in `list_activities/`, in the order `index.json` lists them.
+  Keep only activities whose `start_local` falls inside your window.
+- Details: `get_activity_performance/<activity id>.json` and
+  `get_strength_workout_details/<activity id>.json`.
+- A missing file means that call returned nothing; it is not an error. Count missing
+  detail files in STATS.
+- If your window starts before the capture's range, report Strava as
+  `partial (snapshot starts <date>), covered <from> to <to>`.
+- Report the status as `ok (snapshot, <N> activities)`.
 
 **Apple Health.** Use it only if tools that read Apple Health data are available to you.
 If they are not, report `not able to fetch (no Apple Health access)`. If they are, record
@@ -151,6 +170,7 @@ merged: <N> · unmerged same-day pairs: <N> (<date> <type>, ...) · raw lines: <
 strength without sets: <N> (<date>, ...)
 logs: <N> files · strava: <N> pages, <N> activities, <N> detail fetches · apple health: <N> workouts
 ignored files: <file names, or "none">
+today: <date used> (<"given" or "system">) · strava: <"connector" or "snapshot", missing detail files: <N>>
 ```
 
 Stats are counts of what you actually read and did in this run. Never estimate them:

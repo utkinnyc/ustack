@@ -9,6 +9,11 @@
       "name": "fitstack",
       "source": "./plugins/fitstack",
       "description": "fitstack: fitness and training skills"
+    },
+    {
+      "name": "devstack",
+      "source": "./plugins/devstack",
+      "description": "devstack: plan, scaffold, review and ship small TypeScript web apps"
     }
   ]
 }

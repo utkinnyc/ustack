@@ -5,6 +5,8 @@ ship small web apps fast, with the same stack and habits every time. It is opini
 and meant to be tuned over time.
 
 ```
+/devstack:product-manager       # brainstorm the product: who, why, scope, decision log
+/devstack:distinguished-engineer # technical design and a parallel build plan
 /devstack:plan      # design note in docs/plan.md, then wait for a yes
 /devstack:scaffold  # new app + private GitHub repo
 /devstack:review    # pre-ship self-review
@@ -41,6 +43,8 @@ and meant to be tuned over time.
 
 | Skill | What it does |
 |---|---|
+| `product-manager` | Acts as your PM: frames the product, asks one topic at a time, keeps a decision log, writes the product doc after the brainstorm. |
+| `distinguished-engineer` | Acts as a principal engineer: data model, stack, contracts, auth, CI/CD, secrets, agent guardrails, and an F0 + parallel workstreams build plan. |
 | `plan` | Writes a short design note to `docs/plan.md`, gets a yes, then stops. |
 | `scaffold` | Bootstraps the app, Dockerfile, config files and a private repo. |
 | `review` | Typecheck, lint, build, then a short ship checklist; fixes what it finds. |

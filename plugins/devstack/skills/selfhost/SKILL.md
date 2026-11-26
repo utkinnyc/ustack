@@ -70,3 +70,9 @@ systemd unit for any backend (`/etc/systemd/system/<app>.service`): `User=` a no
 
 - **Don't build on a small VPS** (a Rust build can run out of memory). CI builds and tests, publishes a release, and **the server pulls it** with a timer or a `deploy` command, so GitHub never holds a key into the server. Private repos need a read-only token on the server for this.
 - Secrets live in one env file on the server, readable only by root and the service; on the Mac, in a git-ignored `.env`. Nothing secret is ever committed.
+- For the first production deploy of a full app (deploy kit, release pulls, rollback, backups, device tokens), use `devstack:go-live`.
+
+## Common output that isn't a problem
+
+- `journalctl -u <unit>` shows `-- No entries --` with a hint about groups: system units need `sudo journalctl`.
+- `nc` timeouts pasted after `curl` already worked are stale output, not a new problem.

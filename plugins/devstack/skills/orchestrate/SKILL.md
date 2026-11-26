@@ -59,5 +59,5 @@ When asked for a review, launch several **read-only** reviewer agents, each with
 ## After merging
 
 - Every change goes through a branch and a PR for the user to review and merge, unless they say otherwise.
-- Offer to clean up leftover worktrees and merged branches, and tell the user which folder is the real one to work in.
+- **Keep one checkout.** The user works in the original repo folder, on `main`. Delete each worktree as soon as its branch is merged or pushed, without being asked. Before deleting: confirm every branch is merged or pushed, move any git-ignored local state (`.env`, local data) back into the main checkout, then `git worktree remove` and `git worktree prune`. Delete a shared build cache too (it can be tens of GB) after checking nothing like `CARGO_TARGET_DIR` points at it, and warn that the next build is slow. Report the space freed.
 - Background servers you started stop at the tool's time limit, so say so and give the command to run them manually.

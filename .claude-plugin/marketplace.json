@@ -13,7 +13,7 @@
     {
       "name": "devstack",
       "source": "./plugins/devstack",
-      "description": "devstack: product and system design, parallel agent builds, self-hosting, Apple app shipping, learning, resumes, and small TypeScript web apps"
+      "description": "devstack: product and system design, parallel agent builds, self-hosting and production deploys, Apple app shipping and icons, learning, resumes, and small TypeScript web apps"
     }
   ]
 }

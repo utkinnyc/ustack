@@ -1,6 +1,6 @@
 ---
 name: apple-ship
-description: Get iPhone, Apple Watch, Apple TV and Mac apps from code onto real devices and toward the App Store — free vs paid Apple Developer account, enrolment, Team ID, signing certificates, Developer Mode, pairing the Watch and TV with Xcode, bundle ID naming, XcodeGen projects, simulator and live-preview dev loops, TestFlight via App Store Connect, and the publishing checklist. Use this whenever the user mentions Xcode signing, provisioning, "install on my phone/watch/TV", Developer Mode, Team ID, bundle IDs, TestFlight, App Store Connect, the $99 developer account, simulators, or publishing an Apple app — even if they only paste an Xcode error.
+description: Get iPhone, Apple Watch, Apple TV and Mac apps from code onto real devices and toward the App Store — free vs paid Apple Developer account, enrolment, Team ID, signing certificates, Developer Mode, pairing the Watch and TV with Xcode, bundle ID naming, XcodeGen projects, how signing and provisioning profiles work, simulator and live-preview dev loops, scripted TestFlight uploads (including unsigned tvOS archives and watch-only apps), upload rejections, Swift version mismatches in CI, and the publishing checklist. Use this whenever the user mentions Xcode signing, provisioning, "install on my phone/watch/TV", Developer Mode, Team ID, bundle IDs, TestFlight, App Store Connect, archive/export/upload errors, the $99 developer account, simulators, or publishing an Apple app — even if they only paste an Xcode error.
 ---
 
 # Apple Ship
@@ -43,13 +43,34 @@ If you can run commands on the Mac, check device state yourself (`xcrun devicect
 - Offer small scripts: `dev.sh` (backend + web together, creates dev tokens on first run) and `sim.sh [iphone|watch|tv|all]` (build, boot simulators, install, launch already signed in).
 - Debug builds can accept a dev token via launch arguments, so simulators start signed in.
 
+## How signing works (explain when asked "why is Apple so complicated?")
+
+| Thing | What it is | Where it lives |
+|---|---|---|
+| Certificate | Who you are (name + Team ID) | The Mac's Keychain |
+| App ID | The registered bundle ID | The developer account |
+| Provisioning profile | Permission slip: this certificate may sign this App ID, for these devices (**development**) or for the App Store (**distribution**) | Downloaded by Xcode |
+
+Development profiles list each device, registered by connecting or pairing it with Xcode. Distribution profiles (TestFlight, App Store) need no device list, so **a device only needs to be on for TestFlight when installing**. `-allowProvisioningUpdates` lets Xcode register App IDs and fetch profiles itself; that's why bundle IDs appear in App Store Connect's dropdown after a first archive.
+
 ## TestFlight (the "simple" path the user expects)
 
-1. In App Store Connect → Apps → + → New App, create one record per bundle ID (iPhone, Watch-only app, TV), unless one record can cover several platforms.
-2. Archive and upload (Xcode → Product → Archive → Distribute → TestFlight, or later from CI). Processing takes 10–30 min.
-3. Add the user as an internal tester; install the TestFlight app on iPhone and TV and tap Install. The Watch app installs from TestFlight on the phone.
+**Before the first upload:** every target needs an app icon, and the TV also needs a Top Shelf image (see `devstack:app-icons`). Set `ITSAppUsesNonExemptEncryption = NO` if the app only uses standard HTTPS, so uploads don't ask about encryption. If the HealthKit entitlement is present, the upload needs **both** `NSHealthShareUsageDescription` and `NSHealthUpdateUsageDescription`, even for a read-only app.
 
-Point TestFlight builds at a reachable backend (e.g. the VPS), not the Mac, or they only work at home.
+1. **App records (user, App Store Connect → Apps → + → New App):** one per bundle ID, given as a table (platform, name, bundle ID, SKU). A watch-only app is created under **iOS**. Names must be unique across the store; if one is taken, add a suffix. If a bundle ID is missing from the dropdown, do one archive with `-allowProvisioningUpdates` to register it, then refresh.
+2. **Upload (you, from a script):** offer `scripts/testflight.sh [schemes…]` (see `references/testflight.sh`). It regenerates the project, archives each scheme in Release with a **timestamp build number** (Apple rejects repeats), and exports with `method app-store-connect`, `destination upload`. Traps:
+   - **TV with no registered Apple TV:** archive with `CODE_SIGNING_ALLOWED=NO`, and let the export sign it for distribution. An unsigned archive carries no team, so put `teamID` in the export options, read from the project rather than hard-coded.
+   - **Watch archive missing the app:** check the `.xcarchive` actually contains `Products/Applications/*.app`. A watch-only target may need `SKIP_INSTALL: NO` (or the right install path) in Release.
+   - Filter `xcodebuild` noise in the output (`grep -E "==>|Upload (succeeded|failed)|error:"`).
+   Processing takes 10–30 min.
+3. **Testers (user, per app):** TestFlight tab → Internal Testing → + → a group with their Apple ID → add the build. No review needed.
+4. **Install:** the TestFlight app on iPhone and TV (same Apple ID). The Watch app installs from TestFlight on the phone, or the watch's own TestFlight app. Updates arrive automatically with each upload.
+
+Release builds must point at a reachable backend (e.g. the VPS), not the Mac, or they only work at home. Then each app needs its device token in Settings (see `devstack:go-live`).
+
+## CI for Apple code
+
+If `swift build` fails in CI with "package is using Swift tools version X but the installed version is Y", the runner image has an older Xcode. Move that job to a runner image with the matching Xcode (check the GitHub runner-images changelog) instead of lowering `swift-tools-version`.
 
 ## Publishing checklist (when asked)
 

@@ -61,7 +61,7 @@ Before committing, grep the changed files for everything personal you saw in the
 
 ## 6. Ship and record
 
-1. On a branch in the marketplace repo: add or edit the skills, update the plugin README's command list and table, bump the plugin version (once per PR) and its description if the scope changed.
+1. On a branch in the marketplace repo: add or edit the skills, update the plugin README's command list and table, and the plugin and marketplace descriptions if the scope changed. **Check for a version-bump workflow** (e.g. `.github/workflows/version-bump.yml`) before touching `version`: if one exists, don't bump by hand; give the PR a conventional title instead (`feat(<plugin>): …` for new skills, so it's a minor bump). Bump by hand only when there's no automation.
 2. Commit, push, and open a PR (or add to an open one on the same topic and comment on what changed).
 3. Mark what was processed: `python3 -I $T mark --all` (or just the sessions read), so the next run starts from here.
 4. Report briefly: a table of new and changed skills, what each came from, what you skipped and why, and the PR link.

@@ -1,6 +1,6 @@
 ---
 name: apple-ship
-description: Get iPhone, Apple Watch, Apple TV and Mac apps from code onto real devices and toward the App Store — free vs paid Apple Developer account, enrolment, Team ID, signing certificates, Developer Mode, pairing the Watch and TV with Xcode, bundle ID naming, XcodeGen projects, how signing and provisioning profiles work, simulator and live-preview dev loops, scripted TestFlight uploads (including unsigned tvOS archives and watch-only apps), upload rejections, Swift version mismatches in CI, and the publishing checklist. Use this whenever the user mentions Xcode signing, provisioning, "install on my phone/watch/TV", Developer Mode, Team ID, bundle IDs, TestFlight, App Store Connect, archive/export/upload errors, the $99 developer account, simulators, or publishing an Apple app — even if they only paste an Xcode error.
+description: Get iPhone, Apple Watch, Apple TV and Mac apps from code onto real devices and toward the App Store — free vs paid Apple Developer account, enrolment, Team ID, signing certificates, Developer Mode, pairing the Watch and TV with Xcode, bundle ID naming, XcodeGen projects, how signing and provisioning profiles work, simulator and live-preview dev loops, scripted TestFlight uploads (including unsigned tvOS archives and watch-only apps), upload rejections, a Watch app that won't install, generating API client code at build time instead of committing it, sharing code across the iPhone/Watch/TV apps and the web, keeping Xcode jobs off GitHub CI, and the publishing checklist. Use this whenever the user mentions Xcode signing, provisioning, "install on my phone/watch/TV", Developer Mode, Team ID, bundle IDs, TestFlight, App Store Connect, archive/export/upload errors, the $99 developer account, simulators, "Multiple commands produce", generated code noise, a shared Kit package, or publishing an Apple app — even if they only paste an Xcode error.
 ---
 
 # Apple Ship
@@ -51,7 +51,26 @@ This means one TestFlight page, one tester group and one name. Separate records 
 
 **Ask before deviating.** Any choice that changes the app's shape (separate records, standalone Watch app, separate bundle IDs) goes to the user as options with trade-offs *before* you do it. Don't pick a workaround silently because something failed to build.
 
-**The usual reason a Watch app gets split out:** a shared Swift package that generates code at build time (e.g. the OpenAPI generator plugin) is built twice, for iPhone and Watch, in one build, and Xcode fails with *"Multiple commands produce …/Types.swift"*. Fix the cause: run the generator as a script when the contract changes, commit its output, and add a CI check that fails if the committed code is stale. That also removes Xcode's "Trust & Enable" plugin prompt.
+**The usual reason a Watch app gets split out:** a shared Swift package that generates code with a SwiftPM build plugin (e.g. the OpenAPI generator) is built twice, for iPhone and Watch, in one build. Both runs write to the same output folder, and Xcode fails with *"Multiple commands produce …/Types.swift"*. Fix the cause, not the app's shape.
+
+**Generated code is built, not committed** (the user's rule: generated diffs drown the real code in PRs). Use a script instead of a build plugin:
+
+- `<Kit>/scripts/generate.sh` writes `Sources/<Kit>/Generated/` (git-ignored) from the contract, via `rsync --checksum` so unchanged files don't trigger a recompile, and stays quiet unless it fails.
+- XcodeGen runs it as `options.preGenCommand`, because Xcode lists the package's files on open. Each app scheme also runs it as a `preActions` script, with `settingsTarget` set.
+- From a pre-action, the script inherits Xcode's iOS SDK settings, which break `swift run` for tools that run on the Mac. Start with `[ -n "${SDKROOT:-}" ] && exec env -i HOME="$HOME" PATH=/usr/bin:/bin:/usr/sbin:/sbin "$0"`.
+- A bare `swift build` / `swift test` needs the script run once first. Say so in the README.
+- Web: run the type generator from `predev`, `prebuild` and `pretypecheck` npm scripts, and git-ignore the output.
+- Lockfiles (`Cargo.lock`, `Package.resolved`) stay committed. They pin versions; they aren't code.
+
+This also removes Xcode's "Trust & Enable" plugin prompt.
+
+## Code shared across the apps
+
+- **A shared Swift package** (`<App>Kit`, "Kit" being Apple's naming convention for libraries) holds everything except screens: the API client wrapper (one function per endpoint), request middleware (token, typed errors), the Keychain token store, the offline queue, and one shared sign-in button. Each app only draws screens.
+- **Share logic, not UI.** Watch, TV and phone screens differ on purpose. Shared views fill up with `#if os(watchOS)`.
+- **Web can't share Swift.** Share the OpenAPI contract, plus a `contract/fixtures/` folder of JSON cases that both the Swift and web tests read, to catch the clients drifting apart. A Rust core (UniFFI for Apple, wasm-bindgen for the web) only pays off once real domain logic is duplicated, not for ~60 lines.
+- **A web app that looks native:** a CSS-only change. Use `-apple-system, system-ui` fonts, Apple's system colours as CSS variables with a dark variant, and inset grouped lists. Use Lucide for icons, because SF Symbols' licence doesn't cover the web. If the app gets a brand later, keep one `tokens.json` that generates the CSS variables and a Swift `Theme`.
+- **Offline queues must persist to disk.** watchOS and iOS kill apps all the time. An in-memory queue library (e.g. Queuer) loses logs silently.
 
 ## Dev loop on the Mac
 
@@ -92,6 +111,14 @@ Development profiles list each device, registered by connecting or pairing it wi
 | Ready to Submit / Ready to Test | Ready. "Submit" refers to external testers only; internal testers can install now |
 | Invalid | Rejected; the email says why |
 
+**Watch app not on the watch:** on the iPhone, open the Watch app → My Watch, then scroll to the bottom:
+- **Available Apps → Install** is the normal place to find it. It isn't installed yet.
+- **Installed on Apple Watch** with the app listed: turn on **Show App on Apple Watch**.
+- **Spinner that never finishes:** restart both devices. Keep the watch unlocked on its charger, next to the phone, on the same Wi-Fi, then tap Install again. Also check the watchOS version and free storage.
+- **Still stuck:** install from TestFlight on the watch itself, which skips the phone-to-watch transfer. As a last resort, install from Xcode over a cable.
+
+Before blaming the device, confirm the archive really contains the Watch app.
+
 **App not offered on a device:** TestFlight shows "uses watchOS X" (or similar) when the device's OS is older than the target's minimum. Check the device's version first, and ask whether to lower the deployment target only if the code builds against the older SDK. After an OS update, force-quit TestFlight; it caches the device version.
 
 **Order matters for the TV:** add the tvOS platform to the record *before* uploading the TV build, or it may never show up (re-upload if it doesn't appear within ~30 min). When moving from separate records to one, the Watch and TV apps count as new apps on the devices: delete the old ones and sign in again.
@@ -102,7 +129,9 @@ Release builds must point at a reachable backend (e.g. the VPS), not the Mac, or
 
 ## CI for Apple code
 
-If `swift build` fails in CI with "package is using Swift tools version X but the installed version is Y", the runner image has an older Xcode. Move that job to a runner image with the matching Xcode (check the GitHub runner-images changelog) instead of lowering `swift-tools-version`.
+**No macOS or Xcode jobs on GitHub CI, ever** (the user's rule). They cost 10× Linux minutes. Run the shared package's code generation and `swift test` at the top of the upload script instead, before archiving, so a failure stops the upload. Point this out if you find an existing macOS job.
+
+If a macOS job exists anyway and `swift build` fails with "package is using Swift tools version X but the installed version is Y", the runner image has an older Xcode. Move that job to a runner image with the matching Xcode (check the GitHub runner-images changelog) instead of lowering `swift-tools-version`.
 
 ## Publishing checklist (when asked)
 

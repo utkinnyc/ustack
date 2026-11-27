@@ -25,7 +25,9 @@ cat >"$out/export.plist" <<EOF
 </dict></plist>
 EOF
 
-xcodegen -q
+xcodegen -q                                # also runs preGenCommand (generated client)
+# Shared package checks run here, not on GitHub (no macOS CI). A failure stops the upload.
+# (cd AppKit && swift test --quiet)        # <- uncomment with your package name
 for s in "${schemes[@]}"; do
   case "$s" in
     App)      platform=iOS;     sign=() ;;

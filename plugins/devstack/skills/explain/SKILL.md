@@ -28,6 +28,8 @@ Explaining is read-only. Don't edit code, run tests, or commit unless the user a
 
 ## Orienting in a codebase
 
+**First, check you're reading the current code.** Run `git fetch`, then compare the checkout's branch with `origin/main`. Read `main` (`git show origin/main:<path>`) if the checkout is on an old branch, and say which branch you read. Users notice when you describe files they've already deleted.
+
 When asked to understand a repo or "see the flow", give, in this order:
 
 1. **One-paragraph big picture** plus a small ASCII flow diagram of a request or job moving through the system.
@@ -58,6 +60,15 @@ When asked to understand a repo or "see the flow", give, in this order:
 
 - Inline ASCII for small flows.
 - To follow one concrete input (a command, a request) through the code with values at each step, use `devstack:code-trace`.
+- **HTML pages in `docs/`** when the user likes a diagram and wants to keep it ("put it in docs", "I like the colours and boxes"):
+  - `docs/index.html` lists the pages, and all of them share one `docs/style.css` with light and dark mode.
+  - Use inline SVG or HTML boxes, with no build step.
+  - Preview once (inline the CSS for the preview), then open a PR.
+- **Hosting those pages:**
+  - GitHub Pages on the free plan works only for public repos.
+  - On Pro, a private repo can publish, but **the site is public** to anyone with the URL. Only Enterprise can restrict it.
+  - For private docs, use Cloudflare Pages with Cloudflare Access (free, email one-time code), or just `open docs/x.html`.
+  - Viewing the file on github.com shows the source, not the page.
 
 ## Copy-paste output
 

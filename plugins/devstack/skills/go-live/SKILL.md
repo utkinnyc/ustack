@@ -21,14 +21,24 @@ Get a working app reachable from anywhere, with the least change to the app itse
 |---|---|---|
 | Backend binary | CI builds and tests on merge to main, publishes a GitHub Release with a `.sha256`; **the server pulls it** on a timer | Every merge |
 | Deploy kit (`deploy/`: setup script, unit files, Caddy file, env templates) | Copied once from the Mac with `rsync`, then `setup.sh` | Once, and when `deploy/` changes |
-| Web dashboard | `npm run build` then `rsync dist/` to the folder Caddy serves (or a CI job later) | When the web changes |
+| Web dashboard | **In the same release as the backend:** CI typechecks, tests and builds it, then attaches `<app>-web.tar.gz` and its `.sha256`. The deploy script unpacks it into the same release folder, so a rollback restores both. Caddy serves `/srv/<app>/current/web`; make `/srv/<app>` mode `0751` so Caddy can pass through while the secrets stay unreadable. A manual `rsync dist/` is only a stopgap. | Every merge that touches web or contract |
 | Apple apps | Archive and upload to TestFlight (see `devstack:apple-ship`) | When the apps change |
 
 Explain why the kit is copied rather than pulled: the server can't reach a private repo until a token exists, and the token goes in a file that `setup.sh` creates. Cloning on the server also works, but leaves the token in git config.
 
+The goal is one path: a merge to main deploys everything except the Apple apps. When asked "how is each part built and deployed?", answer for *this* project with a table (part → built by → deployed by → tested in CI). Offer a `docs/deploy-pipeline.html` page that shows each part as check → build → ship → runs on, coloured automatic, manual or missing, plus a dependency diagram (see `devstack:explain` for docs pages).
+
+**Containers:** not needed for one binary on a small VPS. The hardened systemd unit already gives a separate user, a read-only filesystem and a private /tmp, and containers would add image size and lose the rollback and DB snapshot. If the user wants containers anyway, use Podman + Quadlet (no daemon, still systemd), not Docker.
+
+**GitHub Actions costs to mention:**
+- macOS minutes cost 10× Linux, so run no Apple jobs there (see `devstack:apple-ship`).
+- Pin third-party actions to commit SHAs.
+- The server's release-download token can expire, and then deploys silently stop.
+- You only learn a workflow is broken after you push.
+
 ## The deploy kit (repo side, one PR)
 
-Read `references/deploy-kit.md` for the file list and the skeleton of each. In short:
+Read `references/deploy-kit.md` for the file list and the skeleton of each. The skeletons are in shell, but this user reads Python more easily. Write `setup` and `deploy` as typed, standard-library-only Python (`sudo python3 setup.py`; see `devstack:distinguished-engineer`), and drop one-time cleanups once they've run. In short:
 
 - **`setup.sh`**, safe to re-run: OS updates and unattended security upgrades; SSH keys only with no root login; ufw (SSH, 80, 443); fail2ban; swap on small boxes; Caddy; an unprivileged app user and `/srv/<app>/`; backup tool (e.g. Litestream for SQLite); any CLI the app runs; env files written from templates **keeping existing values**; systemd units; Caddy site imported from the main Caddyfile, validated, then reloaded. Print `==> step` lines and end with "Setup done" plus the next steps.
 - **`<app>-deploy.sh`** (timer, every ~5 min, as root): lock; refuse politely (exit 0) while required secrets are empty and list which ones; fetch the latest release; verify sha256; restore the DB from backup if none exists, and **stop rather than start empty** if the restore fails; snapshot the DB; atomically repoint `current` (`ln -sfn` + `mv -T`); restart; poll `/health`; on failure roll back and remember the bad tag; keep the last N releases; append to a history log.

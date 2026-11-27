@@ -9,7 +9,7 @@ Resume help is in [jobstack](../jobstack/); logos and app icons are in
 ## The rules (always on)
 
 [rules/RULES.md](rules/RULES.md) is loaded into every session (and after `/clear` or
-compaction) by a `SessionStart` hook:
+compaction) by a `SessionStart` hook, and into every subagent by a `SubagentStart` hook:
 
 1. **Restate the goal** and the smallest change that meets it.
 2. **Turn the goal into a check**; done means the check passed.
@@ -20,6 +20,7 @@ compaction) by a `SessionStart` hook:
 7. **Prove it**: show the command and output; label claims verified, inferred or guess.
 8. **Be brief and plain**; use tables and diagrams where they read faster.
 9. **Ask before anything hard to undo or outward-facing.**
+10. **Hand wide work to subagents**, and check what they return.
 
 Your own instructions always win over these.
 

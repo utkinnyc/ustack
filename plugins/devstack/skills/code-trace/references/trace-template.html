@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trace: app device add</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1c1f24; --muted: #6b7280; --border: #e2e5ea; --card: #f8f9fb;
+    --code-bg: #f1f3f6; --accent: #e8eefc; --accent-fg: #2f55d4;
+    --val: #15803d; --io: #c2410c; --new: #7c3aed; --bad-bg: #fde8e8; --bad: #b42318;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace; --sans: system-ui, -apple-system, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161a; --fg: #e6e8eb; --muted: #9aa1ac; --border: #2c3038; --card: #1b1e23;
+      --code-bg: #1f2329; --accent: #1f2a44; --accent-fg: #9db4ff;
+      --val: #4ade80; --io: #fb923c; --new: #a78bfa; --bad-bg: #3a1d1d; --bad: #f87171;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161a; --fg: #e6e8eb; --muted: #9aa1ac; --border: #2c3038; --card: #1b1e23;
+    --code-bg: #1f2329; --accent: #1f2a44; --accent-fg: #9db4ff;
+    --val: #4ade80; --io: #fb923c; --new: #a78bfa; --bad-bg: #3a1d1d; --bad: #f87171;
+  }
+  body { margin: 0; padding: 20px 16px; background: var(--bg); color: var(--fg); font: 14px/1.45 var(--sans); }
+  main { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 16px; margin: 0 0 12px; }
+  .cmd { font: 13px var(--mono); background: var(--code-bg); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; overflow-x: auto; }
+  .cmd span { color: var(--muted); }
+  .legend { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .legend b { color: var(--val); font-weight: 500; } .legend i { color: var(--io); font-style: normal; } .legend u { color: var(--new); text-decoration: none; }
+  .step { display: grid; grid-template-columns: 22px 1fr; gap: 8px; margin: 0 0 6px; }
+  .num { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--accent-fg); font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; margin-top: 6px; }
+  .box { border: 1px solid var(--border); background: var(--card); border-radius: 8px; padding: 7px 10px; min-width: 0; }
+  .fn { font: 600 12.5px var(--mono); display: block; overflow-wrap: anywhere; }
+  .loc { font: 11px var(--mono); color: var(--muted); float: right; margin-left: 8px; }
+  .val { font: 11.5px var(--mono); color: var(--val); display: block; margin-top: 3px; overflow-wrap: anywhere; }
+  .io { border-color: var(--io); } .io .fn { color: var(--io); }
+  .new { border-left: 4px solid var(--new); }
+  .d1 { margin-left: 24px; } .d2 { margin-left: 48px; } .d3 { margin-left: 72px; }
+  @media (max-width: 480px) { .d1 { margin-left: 8px; } .d2 { margin-left: 16px; } .d3 { margin-left: 24px; } .loc { float: none; display: block; margin: 0; } }
+  .out { font: 12px var(--mono); background: var(--code-bg); border-radius: 8px; padding: 10px 12px; margin-top: 12px; white-space: pre-wrap; }
+  table { border-collapse: collapse; width: 100%; margin-top: 16px; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  td.bad { color: var(--bad); font-weight: 600; }
+</style>
+</head>
+<body>
+<main>
+  <h1>What happens when you run <code>device add</code></h1>
+  <div class="cmd"><span>$</span> ./app device add --name iPhone</div>
+  <div class="legend">Indented = called by the step above · <b>green</b> = value at that point · <i>orange</i> = touches the database · <u>purple edge</u> = new code</div>
+
+  <!-- One .step per call. Depth: add d1/d2/d3. I/O: add "io" to .box. New code: add "new". -->
+  <div class="step"><div class="num">1</div><div class="box">
+    <span class="loc">src/main.rs:34</span><span class="fn">main()</span>
+    Read the words you typed
+    <span class="val">words = ["device", "add", "--name", "iPhone"]</span>
+  </div></div>
+
+  <div class="step d1"><div class="num">2</div><div class="box">
+    <span class="loc">src/main.rs:54</span><span class="fn">match words</span>
+    <code>["device", "add", rest..]</code> matches → call device_add
+    <span class="val">rest = ["--name", "iPhone"]</span>
+  </div></div>
+
+  <div class="step d2"><div class="num">3</div><div class="box io">
+    <span class="loc">src/db.rs:90</span><span class="fn">open(&amp;config)</span>
+    Open the database and run migrations
+    <span class="val">→ store</span>
+  </div></div>
+
+  <div class="step d2"><div class="num">4</div><div class="box">
+    <span class="loc">src/auth.rs:12</span><span class="fn">generate_token()</span>
+    Random token (toy value; real ones are 64 characters)
+    <span class="val">→ "abc123"</span>
+  </div></div>
+
+  <div class="step d2"><div class="num">5</div><div class="box io">
+    <span class="loc">src/repos.rs:73</span><span class="fn">devices.insert(&amp;device)</span>
+    INSERT INTO devices (…, token_hash)
+    <span class="val">row: d-222 | iPhone | 6ca13d52… | revoked_at NULL</span>
+  </div></div>
+
+  <div class="out">Device "iPhone" added: d-222
+Token (shown only once): abc123</div>
+
+  <table>
+    <thead><tr><th>If…</th><th>Because</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Name is empty</td><td>validation at step 3</td><td class="bad">error, nothing written</td></tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

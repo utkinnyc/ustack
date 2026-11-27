@@ -57,7 +57,7 @@ When asked to understand a repo or "see the flow", give, in this order:
 ## Diagrams
 
 - Inline ASCII for small flows.
-- For a full request/response trace through a large system, offer an HTML page (via the Artifact tool, if available) that follows one concrete input through every stage with file:line references.
+- To follow one concrete input (a command, a request) through the code with values at each step, use `devstack:code-trace`.
 
 ## Copy-paste output
 

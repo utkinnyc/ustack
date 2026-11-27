@@ -10,6 +10,7 @@ and meant to be tuned over time.
 /devstack:distinguished-engineer # technical design and a parallel build plan
 /devstack:orchestrate            # F0 + parallel worktree agents + merge plan
 /devstack:explain                # learn a codebase or concept, with analogies
+/devstack:code-trace             # follow one command/request through the code, step by step
 /devstack:selfhost               # VPS + Cloudflare + Caddy runbook (you run the commands)
 /devstack:go-live                # first production deploy: VPS backend, web, TestFlight
 /devstack:apple-ship             # signing, devices, TestFlight, App Store
@@ -57,6 +58,7 @@ and meant to be tuned over time.
 | `distinguished-engineer` | Acts as a principal engineer: data model, stack, contracts, auth, CI/CD, secrets, agent guardrails, and an F0 + parallel workstreams build plan. |
 | `orchestrate` | Runs a plan as one foundation step plus parallel agents in git worktrees, then merges in dependency order and passes an end-to-end smoke test. |
 | `explain` | Teaches a codebase or concept briefly, grounded in the code, with C++/Python/TypeScript analogies, a reading order and diagrams. |
+| `code-trace` | Follows one real input through the code: numbered, indented calls with file:line, a toy value at each step, database touches highlighted, failure cases; rendered as an HTML page. |
 | `selfhost` | Step-by-step VPS setup and deploys: SSH keys, ufw, Cloudflare DNS, Caddy, systemd. Never touches the server itself. |
 | `go-live` | First production deploy: a deploy kit where the server pulls CI releases with checksum, health check and rollback; web on the same host; device tokens; a step-by-step walkthrough. |
 | `apple-ship` | Gets iPhone/Watch/TV apps onto devices and TestFlight: developer account, signing explained, Developer Mode, bundle IDs, a scripted upload. |

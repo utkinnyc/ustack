@@ -90,7 +90,7 @@ Development profiles list each device, registered by connecting or pairing it wi
 
 ## TestFlight (the "simple" path the user expects)
 
-**Before the first upload:** every target needs an app icon, and the TV also needs a Top Shelf image (see `devstack:app-icons`). Set `ITSAppUsesNonExemptEncryption = NO` if the app only uses standard HTTPS, so uploads don't ask about encryption. If the HealthKit entitlement is present, the upload needs **both** `NSHealthShareUsageDescription` and `NSHealthUpdateUsageDescription`, even for a read-only app.
+**Before the first upload:** every target needs an app icon, and the TV also needs a Top Shelf image (use `designstack:app-icons` if it's installed; otherwise ask the user for a 1024×1024 PNG and the Top Shelf images). Set `ITSAppUsesNonExemptEncryption = NO` if the app only uses standard HTTPS, so uploads don't ask about encryption. If the HealthKit entitlement is present, the upload needs **both** `NSHealthShareUsageDescription` and `NSHealthUpdateUsageDescription`, even for a read-only app.
 
 1. **App record (user, App Store Connect → Apps → + → New App):** one record (platform, name, bundle ID, SKU, given as a table), then add tvOS to it if there's a TV app. Names must be unique across the store; if one is taken, add a suffix. If the bundle ID is missing from the dropdown, do one archive with `-allowProvisioningUpdates` to register it, then refresh.
 2. **Upload (you, from a script):** offer `scripts/testflight.sh [schemes…]` (see `references/testflight.sh`). It regenerates the project, archives each scheme in Release with a **timestamp build number** (Apple rejects repeats), and exports with `method app-store-connect`, `destination upload`. Traps:

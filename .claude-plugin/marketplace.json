@@ -13,7 +13,12 @@
     {
       "name": "devstack",
       "source": "./plugins/devstack",
-      "description": "devstack: product and system design, parallel agent builds, self-hosting and production deploys, Apple app shipping, icons and login, learning, resumes, turning transcripts into skills, and small TypeScript web apps"
+      "description": "devstack: product and system design, parallel agent builds, self-hosting and production deploys, Apple app shipping, login, learning, resumes, turning transcripts into skills, and small TypeScript web apps"
+    },
+    {
+      "name": "designstack",
+      "source": "./plugins/designstack",
+      "description": "designstack: design skills — logos as SVG code, and app icons and favicons for Apple platforms and the web"
     }
   ]
 }

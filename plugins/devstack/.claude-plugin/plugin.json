@@ -1,7 +1,7 @@
 {
   "name": "devstack",
-  "version": "0.4.0",
-  "description": "devstack: think before building, change only what was asked, prove it works — always-on rules plus skills for product and technical design, planning, debugging, building, review, shipping to servers and Apple devices, and turning sessions into skills",
+  "version": "1.0.0",
+  "description": "devstack: think before building, change only what was asked, prove it works \u2014 always-on rules plus skills for product and technical design, planning, debugging, building, review, shipping to servers and Apple devices, and turning sessions into skills",
   "author": {
     "name": "Utkarsh Khandelwal"
   }

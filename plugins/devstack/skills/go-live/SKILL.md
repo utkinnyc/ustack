@@ -38,7 +38,15 @@ The goal is one path: a merge to main deploys everything except the Apple apps. 
 
 ## The deploy kit (repo side, one PR)
 
-Read `references/deploy-kit.md` for the file list and the skeleton of each. The skeletons are in shell. If the user reads Python more easily (ask), write `setup` and `deploy` as typed, standard-library-only Python instead (`sudo python3 setup.py`; see `devstack:distinguished-engineer`). Drop one-time cleanups once they've run. In short:
+Read `references/deploy-kit.md` for the file list and the skeleton of each. The skeletons are in shell. If the user reads Python more easily (ask), write `setup` and `deploy` as typed, standard-library-only Python instead (`sudo python3 setup.py`; see `devstack:distinguished-engineer`). Drop one-time cleanups once they've run. Typed Python comes out ~30% longer than the bash, so say so. Inline tiny templates into the script. Test the deploy script on the Mac against a fake GitHub server, with a temp folder standing in for `/srv/<app>` and stubbed `systemctl`/`journalctl`. Test each path: first deploy, up to date, bad checksum, failed health check → rollback, rollback also failing.
+
+**Logging that says where it broke:**
+- Every deploy log line starts with its step (`[download]`, `[switch]`, `[health check]`, `[rollback]`). A failed command shows its exit code and the last lines of its output, and the health check says what it last saw (`HTTP 500`, `service not running`).
+- Errors during an install also go to the history file with the release tag and step. A GitHub outage goes only to the journal, so it doesn't add a line every 5 minutes.
+- Setup tees everything to `/var/log/<app>-setup.log` and ends a failure with `ERROR in step '<step>': <command> exited with <code>`.
+- Put a "where to look" table (history file, journal, setup log) in the deploy README.
+
+In short:
 
 - **`setup.sh`**, safe to re-run: OS updates and unattended security upgrades; SSH keys only with no root login; ufw (SSH, 80, 443); fail2ban; swap on small boxes; Caddy; an unprivileged app user and `/srv/<app>/`; backup tool (e.g. Litestream for SQLite); any CLI the app runs; env files written from templates **keeping existing values**; systemd units; Caddy site imported from the main Caddyfile, validated, then reloaded. Print `==> step` lines and end with "Setup done" plus the next steps.
 - **`<app>-deploy.sh`** (timer, every ~5 min, as root): lock; refuse politely (exit 0) while required secrets are empty and list which ones; fetch the latest release; verify sha256; restore the DB from backup if none exists, and **stop rather than start empty** if the restore fails; snapshot the DB; atomically repoint `current` (`ln -sfn` + `mv -T`); restart; poll `/health`; on failure roll back and remember the bad tag; keep the last N releases; append to a history log.

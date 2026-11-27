@@ -65,6 +65,7 @@ systemd unit for any backend (`/etc/systemd/system/<app>.service`): `User=` a no
 
 - **Caddy vs nginx:** Caddy has automatic HTTPS and a three-line config. nginx is the industry standard, a little lighter on memory, and needs certbot. Moving between them is easy at this scale, since only the proxy config changes.
 - **Docker?** Usually no on a small box. `dockerd` + `containerd` idle at ~70–150 MB, the engine takes ~400 MB of disk, and a single binary under hardened systemd already gives isolation. Podman + Quadlet is the light option if containers are wanted. Say these figures are rough.
+- **A web page for logs ("like Splunk, but free"):** structured JSON logs first, then a hosted free tier with a small shipping agent. See `devstack:distinguished-engineer` → `references/llm-backend.md`, "Logs".
 - **Memory:** the app dwarfs the proxy. Next.js uses ~150–400 MB, a plain Node API ~40–80 MB, Go ~10–20 MB, Rust ~2–10 MB. Say these are rough figures.
 
 ## Deploys and secrets

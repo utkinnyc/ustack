@@ -28,7 +28,7 @@ Your own instructions always win over these.
 
 ```
 Thinking   product-manager → distinguished-engineer → plan      debug · challenge · explain · code-trace
-Building   build · orchestrate · scaffold
+Building   build · orchestrate · lean · scaffold
 Shipping   review → ship · selfhost · go-live · apple-ship
 Improving  transcripts-to-skills
 ```
@@ -54,6 +54,7 @@ Each step writes something the next one reads: the product doc, the design doc,
 |---|---|
 | `build` | Carries out the approved plan one step at a time: change, run the step's check, tick it off. Stops when the work would go beyond the plan. |
 | `orchestrate` | Runs a big plan as one foundation step plus parallel agents in git worktrees, then merges in dependency order and passes an end-to-end smoke test. |
+| `lean` | Makes a codebase small enough for one developer to read: measures lines, deletes unused code and fakes, uses the framework's own pieces, one test per behaviour, one-line comments, file-by-file trimming sessions. |
 | `scaffold` | Bootstraps a small Next.js web app with the house stack (below) and a private repo. |
 
 ### Shipping

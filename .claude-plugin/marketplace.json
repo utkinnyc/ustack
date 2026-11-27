@@ -19,6 +19,11 @@
       "name": "jobstack",
       "source": "./plugins/jobstack",
       "description": "jobstack: job-hunting skills — tailor your existing resume to a job description, with fit checks and suggested edits"
+    },
+    {
+      "name": "designstack",
+      "source": "./plugins/designstack",
+      "description": "designstack: design skills — logos as SVG code, and app icons and favicons for Apple platforms and the web"
     }
   ]
 }

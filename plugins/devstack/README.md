@@ -3,7 +3,8 @@
 devstack is a personal software factory for Claude Code: shape the product, design the
 system, build it with parallel agents, ship it to a VPS and Apple devices, and learn the
 stack along the way. Its web-app skills use the same stack and habits every time. It is
-opinionated and meant to be tuned over time. Resume help moved to [jobstack](../jobstack/).
+opinionated and meant to be tuned over time. Resume help is in [jobstack](../jobstack/);
+logos and app icons are in [designstack](../designstack/).
 
 ```
 /devstack:product-manager       # brainstorm the product: who, why, scope, decision log
@@ -14,7 +15,6 @@ opinionated and meant to be tuned over time. Resume help moved to [jobstack](../
 /devstack:selfhost               # VPS + Cloudflare + Caddy runbook (you run the commands)
 /devstack:go-live                # first production deploy: VPS backend, web, TestFlight
 /devstack:apple-ship             # signing, devices, TestFlight, App Store
-/devstack:app-icons              # generate app icons from a script, every platform
 /devstack:app-login              # Sign in with Apple / Google, account linking
 /devstack:transcripts-to-skills  # mine past sessions for new or better skills
 /devstack:plan      # design note in docs/plan.md, then wait for a yes
@@ -62,7 +62,6 @@ opinionated and meant to be tuned over time. Resume help moved to [jobstack](../
 | `go-live` | First production deploy: a deploy kit where the server pulls CI releases with checksum, health check and rollback; web on the same host; device tokens; a step-by-step walkthrough. |
 | `apple-ship` | Gets iPhone/Watch/TV apps onto devices and TestFlight: developer account, signing explained, Developer Mode, bundle IDs, a scripted upload. |
 | `app-login` | Login design: Sign in with Apple on every device, Google, server-side token checks, linking accounts so both reach one user, App Store rules. |
-| `app-icons` | Draws app icons with a checked-in script and writes every asset catalog (iPhone, Watch, TV layers and Top Shelf). |
 | `transcripts-to-skills` | Reads your past Claude Code / T3Code sessions (only what's new since last run), finds repeated workflows and corrections, and turns them into skills in a PR. |
 | `plan` | Writes a short design note to `docs/plan.md`, gets a yes, then stops. |
 | `scaffold` | Bootstraps the app, Dockerfile, config files and a private repo. |

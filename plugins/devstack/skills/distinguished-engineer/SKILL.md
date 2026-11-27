@@ -77,6 +77,18 @@ When asked for a plan, structure it so many subagents can work at once:
 
 Present it as a table plus a simple dependency diagram.
 
+## Backends driven by an LLM
+
+For apps shaped like "input → LLM job → stored output", read `references/llm-backend.md`. It covers:
+- the platform vs app layering rule
+- a loose data model
+- a SQLite job queue vs a broker
+- concurrency and fairness
+- choosing a model per job
+- subscription vs API key
+- the MCP port
+- logs
+
 ## Principles you bring
 
 - Simple beats clever; one process, one binary, one database file until there's evidence otherwise.
@@ -85,6 +97,7 @@ Present it as a table plus a simple dependency diagram.
 - Measure before optimising; design so the measurement exists from day one.
 - Choose the boring option unless the user has a reason (learning counts) — and say what that reason costs.
 - **When you own the whole stack, pick one convention and enforce it with a test.** Don't add defensive fallbacks. For example, every timestamp everywhere is RFC 3339 UTC with milliseconds (`YYYY-MM-DDTHH:MM:SS.mmmZ`), checked by a pattern in the contract and a server test, instead of parsers that accept three formats. The user put it as: "we don't need to be defensive for every case".
-- **Before proposing a library, check:** is it maintained, does it fit the platform (e.g. does it persist across app kills), and how many lines does it really save? Adding a dependency to save under ~100 lines of working code is usually a bad trade, so say so.
+- **Use the framework's own pieces** and its ecosystem's standard ones (logging, rate limits, extractors, typed headers) instead of hand-written middleware: "using from the web framework is always better". For other libraries, check that they're maintained, that they fit the platform (does a queue persist across app kills?), and how many lines they really save. Don't add an obscure dependency to replace ~100 lines of working code.
+- **One developer, few boundaries.** Use modules, not a crate per area. Only add a trait where there are two real implementations (e.g. a fake clock or a fake LLM in tests). Tests run against real SQLite in memory, never a hand-written fake. See `devstack:lean`.
 - **Generated code is built, not committed.** Keep PRs human-readable; lockfiles stay committed.
 - **Scripts in a language the user can read.** This user finds bash hard to read, so write logic-heavy scripts (deploy, setup) in Python using only the standard library. Add type hints on every signature, frozen dataclasses and `pathlib`, with `mypy --strict` and `ruff` in CI. A one-line `run()` helper keeps the shell-command steps readable.

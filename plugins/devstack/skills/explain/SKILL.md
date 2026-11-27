@@ -50,6 +50,13 @@ When asked to understand a repo or "see the flow", give, in this order:
 4. **Render every Mermaid block** (e.g. `npx -y @mermaid-js/mermaid-cli -i x.mmd -o x.svg`) and fix any that fail to parse.
 5. Scan for secrets and real IPs or emails, commit only the doc files (check `git status` if another session shares the checkout), and open a PR. Summarise the system in chat in a few paragraphs, with the C++/Python/TypeScript analogies.
 
+## Reading code together
+
+When the user goes through a folder file by file and asks about syntax (`&[&str]`, `mod.rs`, `#[derive]`, `match`, `crate::`, `?`, closures):
+- Answer the exact snippet in plain words first, then the analogy ("`mod.rs` is like `__init__.py`", "`.map(|img| …)` is JavaScript's `.map(img => …)`", "the last expression without `;` is the return value").
+- Correct a wrong guess gently, and say what's true instead. For example, the strings live in the binary and the slice holds pointers to them, so a missing env var doesn't matter at compile time.
+- When they move from understanding to trimming, follow `devstack:lean`, section 5.
+
 ## Walkthroughs
 
 - **"Explain each line":** a table of line → meaning, grouped by block. Explain syntax once, then move on.

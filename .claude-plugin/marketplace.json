@@ -13,7 +13,17 @@
     {
       "name": "devstack",
       "source": "./plugins/devstack",
-      "description": "devstack: product and system design, parallel agent builds, self-hosting and production deploys, Apple app shipping, icons and login, learning, resumes, keeping code lean, turning transcripts into skills, and small TypeScript web apps"
+      "description": "devstack: think before building, change only what was asked, prove it works — always-on rules plus skills for product and technical design, planning, debugging, building, review, shipping to servers and Apple devices, and turning sessions into skills"
+    },
+    {
+      "name": "jobstack",
+      "source": "./plugins/jobstack",
+      "description": "jobstack: job-hunting skills — tailor your existing resume to a job description, with fit checks and suggested edits"
+    },
+    {
+      "name": "designstack",
+      "source": "./plugins/designstack",
+      "description": "designstack: design skills — logos as SVG code, and app icons and favicons for Apple platforms and the web"
     }
   ]
 }

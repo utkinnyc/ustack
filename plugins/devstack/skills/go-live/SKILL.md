@@ -10,9 +10,9 @@ Get a working app reachable from anywhere, with the least change to the app itse
 ## Ground rules
 
 - **Deploy first, fix later.** If the user says "don't change code logic, I want to deploy it first", only touch deploy files, config and build settings. Log app bugs you notice for afterwards.
-- **You don't touch the server** (see `devstack:selfhost`). You prepare the kit in a PR and write the steps; the user runs server commands and pastes output. Commands on the Mac, `gh`, and checks from outside (`curl https://<host>/health`) are fine.
+- **You don't touch the server.** Same rule and step format as `devstack:selfhost`: you prepare the kit in a PR and write the steps grouped by where they run; the user runs server commands and pastes output. Commands on the Mac, `gh`, and checks from outside (`curl https://<host>/health`) are fine.
 - **Secrets never go in chat or git.** The user pastes them straight into env files on the server. Say "don't paste the values here" every time you ask for one.
-- **The user wants to learn.** Explain each step and each command piece by piece when asked (what `rsync -a --delete src/ host:dst/` does, why the trailing slash matters, what `sudo -u` does). Answer "what are all these?" with a short table of each file and its job.
+- **Explain when asked.** Break commands down piece by piece (what `rsync -a --delete src/ host:dst/` does, why the trailing slash matters, what `sudo -u` does). Answer "what are all these?" with a short table of each file and its job.
 - **One step at a time.** When they say "let's talk one by one", give the next step only, with what to paste back.
 
 ## The shape
@@ -28,17 +28,17 @@ Explain why the kit is copied rather than pulled: the server can't reach a priva
 
 The goal is one path: a merge to main deploys everything except the Apple apps. When asked "how is each part built and deployed?", answer for *this* project with a table (part → built by → deployed by → tested in CI). Offer a `docs/deploy-pipeline.html` page that shows each part as check → build → ship → runs on, coloured automatic, manual or missing, plus a dependency diagram (see `devstack:explain` for docs pages).
 
-**Containers:** not needed for one binary on a small VPS. The hardened systemd unit already gives a separate user, a read-only filesystem and a private /tmp, and containers would add image size and lose the rollback and DB snapshot. If the user wants containers anyway, use Podman + Quadlet (no daemon, still systemd), not Docker.
+**Containers:** not needed for one binary on a small VPS (see `devstack:selfhost`, "Docker?"). The hardened systemd unit already isolates it, and containers would lose this kit's rollback and DB snapshot.
 
 **GitHub Actions costs to mention:**
-- macOS minutes cost 10× Linux, so run no Apple jobs there (see `devstack:apple-ship`).
+- macOS minutes cost about 10× Linux; see `devstack:apple-ship` for keeping Apple checks local.
 - Pin third-party actions to commit SHAs.
 - The server's release-download token can expire, and then deploys silently stop.
 - You only learn a workflow is broken after you push.
 
 ## The deploy kit (repo side, one PR)
 
-Read `references/deploy-kit.md` for the file list and the skeleton of each. The skeletons are in shell, but this user reads Python more easily. Write `setup` and `deploy` as typed, standard-library-only Python (`sudo python3 setup.py`; see `devstack:distinguished-engineer`), and drop one-time cleanups once they've run. Typed Python comes out ~30% longer than the bash, so say so. Inline tiny templates into the script. Test the deploy script on the Mac against a fake GitHub server, with a temp folder standing in for `/srv/<app>` and stubbed `systemctl`/`journalctl`. Test each path: first deploy, up to date, bad checksum, failed health check → rollback, rollback also failing.
+Read `references/deploy-kit.md` for the file list and the skeleton of each. The skeletons are in shell. If the user reads Python more easily (ask), write `setup` and `deploy` as typed, standard-library-only Python instead (`sudo python3 setup.py`; see `devstack:distinguished-engineer`). Drop one-time cleanups once they've run. Typed Python comes out ~30% longer than the bash, so say so. Inline tiny templates into the script. Test the deploy script on the Mac against a fake GitHub server, with a temp folder standing in for `/srv/<app>` and stubbed `systemctl`/`journalctl`. Test each path: first deploy, up to date, bad checksum, failed health check → rollback, rollback also failing.
 
 **Logging that says where it broke:**
 - Every deploy log line starts with its step (`[download]`, `[switch]`, `[health check]`, `[rollback]`). A failed command shows its exit code and the last lines of its output, and the health check says what it last saw (`HTTP 500`, `service not running`).
@@ -73,7 +73,7 @@ Group every step by place: **Browser**, **Mac**, **Server**. Typical order:
 
 ## Reading pasted output
 
-- `-- No entries --` with a hint about groups: `journalctl` needs `sudo` for system units. The deploy probably ran fine.
+- See also `devstack:selfhost`, "Common output that isn't a problem".
 - `not deploying: fill in …`: the timer ran before the secrets were filled in. Harmless; the next run deploys.
 - `no matching backups found` on a fresh server is correct.
 - `_apt … Permission denied` during a `.deb` install, and "`~/.local/bin` not in PATH" after a CLI install for a service user, are harmless.

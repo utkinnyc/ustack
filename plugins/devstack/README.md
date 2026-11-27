@@ -1,16 +1,15 @@
 # devstack
 
 devstack makes Claude Code work like a careful senior engineer: think before building,
-change only what you asked for, and prove it works. It covers the whole path:
-**thinking → building → shipping**, plus turning your own sessions into better skills.
+change only what you asked for, prove it works.
 
 Resume help is in [jobstack](../jobstack/); logos and app icons are in
 [designstack](../designstack/).
 
 ## The rules (always on)
 
-devstack loads [rules/RULES.md](rules/RULES.md) at the start of every session, and again
-after `/clear` or compaction, through a `SessionStart` hook. Nine short rules:
+[rules/RULES.md](rules/RULES.md) is loaded into every session (and after `/clear` or
+compaction) by a `SessionStart` hook:
 
 1. **Restate the goal** and the smallest change that meets it.
 2. **Turn the goal into a check**; done means the check passed.
@@ -19,22 +18,27 @@ after `/clear` or compaction, through a `SessionStart` hook. Nine short rules:
 5. **Agree before building** anything bigger than a small fix.
 6. **Root cause before a fix**; after two failed fixes, test the assumption.
 7. **Prove it**: show the command and output; label claims verified, inferred or guess.
-8. **Write plainly**: answer first, short sentences.
+8. **Be brief and plain**; use tables and diagrams where they read faster.
 9. **Ask before anything hard to undo or outward-facing.**
 
 Your own instructions always win over these.
 
 ## Skills
 
-```
-Thinking   product-manager → distinguished-engineer → plan      debug · challenge · explain · code-trace
-Building   build · orchestrate · lean · scaffold
-Shipping   review → ship · selfhost · go-live · apple-ship
-Improving  transcripts-to-skills
+```mermaid
+flowchart LR
+  PM[product-manager] -->|product doc| DE[distinguished-engineer]
+  DE -->|design doc| P[plan]
+  P -->|docs/plan.md| B[build]
+  P -->|docs/plan.md| O[orchestrate]
+  B -->|diff| R[review]
+  O -->|diff| R
+  R --> S[ship]
+  S -->|PR merged| D[selfhost / go-live / apple-ship]
 ```
 
-Each step writes something the next one reads: the product doc, the design doc,
-`docs/plan.md`, then the diff that `review` checks against the plan.
+On the side: `debug`, `challenge`, `explain`, `code-trace` (thinking), `lean`, `scaffold`
+(building), and `transcripts-to-skills` (improving the skills themselves).
 
 ### Thinking
 

@@ -1,7 +1,7 @@
 {
   "name": "devstack",
   "version": "0.3.0",
-  "description": "devstack: product and system design, parallel agent builds, self-hosting and production deploys, Apple app shipping, icons and login, learning, turning transcripts into skills, and small TypeScript web apps",
+  "description": "devstack: product and system design, parallel agent builds, self-hosting and production deploys, Apple app shipping, app icons, learning, turning transcripts into skills, and small TypeScript web apps",
   "author": {
     "name": "Utkarsh Khandelwal"
   }

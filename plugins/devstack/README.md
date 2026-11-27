@@ -15,7 +15,6 @@ logos and app icons are in [designstack](../designstack/).
 /devstack:selfhost               # VPS + Cloudflare + Caddy runbook (you run the commands)
 /devstack:go-live                # first production deploy: VPS backend, web, TestFlight
 /devstack:apple-ship             # signing, devices, TestFlight, App Store
-/devstack:app-login              # Sign in with Apple / Google, account linking
 /devstack:transcripts-to-skills  # mine past sessions for new or better skills
 /devstack:plan      # design note in docs/plan.md, then wait for a yes
 /devstack:scaffold  # new app + private GitHub repo
@@ -60,8 +59,7 @@ logos and app icons are in [designstack](../designstack/).
 | `code-trace` | Follows one real input through the code: numbered, indented calls with file:line, a toy value at each step, database touches highlighted, failure cases; rendered as an HTML page. |
 | `selfhost` | Step-by-step VPS setup and deploys: SSH keys, ufw, Cloudflare DNS, Caddy, systemd. Never touches the server itself. |
 | `go-live` | First production deploy: a deploy kit where the server pulls CI releases with checksum, health check and rollback; web on the same host; device tokens; a step-by-step walkthrough. |
-| `apple-ship` | Gets iPhone/Watch/TV apps onto devices and TestFlight: developer account, signing explained, Developer Mode, bundle IDs, a scripted upload. |
-| `app-login` | Login design: Sign in with Apple on every device, Google, server-side token checks, linking accounts so both reach one user, App Store rules. |
+| `apple-ship` | Gets iPhone, iPad, Watch, TV and Mac apps onto devices and TestFlight: developer account, signing, bundle IDs, a configurable upload script for repeat releases, and fixes for common upload and install failures. |
 | `transcripts-to-skills` | Reads your past Claude Code / T3Code sessions (only what's new since last run), finds repeated workflows and corrections, and turns them into skills in a PR. |
 | `plan` | Writes a short design note to `docs/plan.md`, gets a yes, then stops. |
 | `scaffold` | Bootstraps the app, Dockerfile, config files and a private repo. |

@@ -42,7 +42,7 @@ Go roughly in this order, one item at a time, skipping what doesn't apply:
 5. **API surface** — a handful of endpoints, named.
 6. **Client ↔ server updates** — start with polling; add metrics from day one (`tracing`, request/job durations) so push can be decided with data.
 7. **Connectivity & offline** — how devices actually reach the network; a local durable queue on each client.
-8. **Auth** — the target scheme and a dev-only stand-in until prerequisites exist; per-device, revocable sessions behind one session layer so only the login step changes.
+8. **Auth** — the target scheme and a dev-only stand-in until prerequisites exist; per-device, revocable sessions behind one session layer so only the login step changes. All auth code in one module, so the rest of the backend only sees "user X on device Y". With third-party login (Apple, Google): the server verifies the provider's identity token itself (signature against the provider's keys, `iss`, `aud` for **every** client ID you ship, `exp`, nonce) and never trusts claims from the app; users are keyed by `(provider, sub)`, **never by email**; linking a second provider is an explicit "link account" step while signed in, or a second login silently creates a new, empty user. Ask early whether it's for the owner only or for other people: multi-user means per-user scoping, limits and account deletion, which is the bigger work.
 9. **Agent/MCP tools** — the exact read and write tools; every write validated and attributed; no raw SQL, no deletes unless needed.
 10. **Repo layout** — usually a monorepo; show the tree. Decide where shared plugins/skills live and pin versions.
 11. **Sync** — incremental anchors, idempotent upserts by source ID, deletions propagate, backfill in chunks.

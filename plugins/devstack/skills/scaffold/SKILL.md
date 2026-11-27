@@ -74,8 +74,7 @@ CMD ["node", "server.js"]
 1. `npm install`, `npm run typecheck`, `npm run build`; fix failures.
 2. If prototype code exists, make the first commit of it before rewriting so history
    keeps the prototypes.
-3. `git init -b main`, commit `feat: scaffold <app>` ending with
-   `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`.
-4. `gh repo create <app> --private --source=. --push`. Never public unless told.
+3. `git init -b main`, commit `feat: scaffold <app>` (with the attribution Claude Code asks for, if any).
+4. Ask before creating the remote, then `gh repo create <app> --private --source=. --push`. Never public unless told.
 5. Report the repo URL and how to run. If `gh` or Docker is unavailable, skip that step
    and say so.

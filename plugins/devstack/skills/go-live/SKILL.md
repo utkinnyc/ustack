@@ -10,9 +10,9 @@ Get a working app reachable from anywhere, with the least change to the app itse
 ## Ground rules
 
 - **Deploy first, fix later.** If the user says "don't change code logic, I want to deploy it first", only touch deploy files, config and build settings. Log app bugs you notice for afterwards.
-- **You don't touch the server** (see `devstack:selfhost`). You prepare the kit in a PR and write the steps; the user runs server commands and pastes output. Commands on the Mac, `gh`, and checks from outside (`curl https://<host>/health`) are fine.
+- **You don't touch the server.** Same rule and step format as `devstack:selfhost`: you prepare the kit in a PR and write the steps grouped by where they run; the user runs server commands and pastes output. Commands on the Mac, `gh`, and checks from outside (`curl https://<host>/health`) are fine.
 - **Secrets never go in chat or git.** The user pastes them straight into env files on the server. Say "don't paste the values here" every time you ask for one.
-- **The user wants to learn.** Explain each step and each command piece by piece when asked (what `rsync -a --delete src/ host:dst/` does, why the trailing slash matters, what `sudo -u` does). Answer "what are all these?" with a short table of each file and its job.
+- **Explain when asked.** Break commands down piece by piece (what `rsync -a --delete src/ host:dst/` does, why the trailing slash matters, what `sudo -u` does). Answer "what are all these?" with a short table of each file and its job.
 - **One step at a time.** When they say "let's talk one by one", give the next step only, with what to paste back.
 
 ## The shape
@@ -28,17 +28,17 @@ Explain why the kit is copied rather than pulled: the server can't reach a priva
 
 The goal is one path: a merge to main deploys everything except the Apple apps. When asked "how is each part built and deployed?", answer for *this* project with a table (part → built by → deployed by → tested in CI). Offer a `docs/deploy-pipeline.html` page that shows each part as check → build → ship → runs on, coloured automatic, manual or missing, plus a dependency diagram (see `devstack:explain` for docs pages).
 
-**Containers:** not needed for one binary on a small VPS. The hardened systemd unit already gives a separate user, a read-only filesystem and a private /tmp, and containers would add image size and lose the rollback and DB snapshot. If the user wants containers anyway, use Podman + Quadlet (no daemon, still systemd), not Docker.
+**Containers:** not needed for one binary on a small VPS (see `devstack:selfhost`, "Docker?"). The hardened systemd unit already isolates it, and containers would lose this kit's rollback and DB snapshot.
 
 **GitHub Actions costs to mention:**
-- macOS minutes cost 10× Linux, so run no Apple jobs there (see `devstack:apple-ship`).
+- macOS minutes cost about 10× Linux; see `devstack:apple-ship` for keeping Apple checks local.
 - Pin third-party actions to commit SHAs.
 - The server's release-download token can expire, and then deploys silently stop.
 - You only learn a workflow is broken after you push.
 
 ## The deploy kit (repo side, one PR)
 
-Read `references/deploy-kit.md` for the file list and the skeleton of each. The skeletons are in shell, but this user reads Python more easily. Write `setup` and `deploy` as typed, standard-library-only Python (`sudo python3 setup.py`; see `devstack:distinguished-engineer`), and drop one-time cleanups once they've run. In short:
+Read `references/deploy-kit.md` for the file list and the skeleton of each. The skeletons are in shell. If the user reads Python more easily (ask), write `setup` and `deploy` as typed, standard-library-only Python instead (`sudo python3 setup.py`; see `devstack:distinguished-engineer`). Drop one-time cleanups once they've run. In short:
 
 - **`setup.sh`**, safe to re-run: OS updates and unattended security upgrades; SSH keys only with no root login; ufw (SSH, 80, 443); fail2ban; swap on small boxes; Caddy; an unprivileged app user and `/srv/<app>/`; backup tool (e.g. Litestream for SQLite); any CLI the app runs; env files written from templates **keeping existing values**; systemd units; Caddy site imported from the main Caddyfile, validated, then reloaded. Print `==> step` lines and end with "Setup done" plus the next steps.
 - **`<app>-deploy.sh`** (timer, every ~5 min, as root): lock; refuse politely (exit 0) while required secrets are empty and list which ones; fetch the latest release; verify sha256; restore the DB from backup if none exists, and **stop rather than start empty** if the restore fails; snapshot the DB; atomically repoint `current` (`ln -sfn` + `mv -T`); restart; poll `/health`; on failure roll back and remember the bad tag; keep the last N releases; append to a history log.
@@ -65,7 +65,7 @@ Group every step by place: **Browser**, **Mac**, **Server**. Typical order:
 
 ## Reading pasted output
 
-- `-- No entries --` with a hint about groups: `journalctl` needs `sudo` for system units. The deploy probably ran fine.
+- See also `devstack:selfhost`, "Common output that isn't a problem".
 - `not deploying: fill in …`: the timer ran before the secrets were filled in. Harmless; the next run deploys.
 - `no matching backups found` on a fresh server is correct.
 - `_apt … Permission denied` during a `.deb` install, and "`~/.local/bin` not in PATH" after a CLI install for a service user, are harmless.

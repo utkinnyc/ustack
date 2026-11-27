@@ -20,6 +20,8 @@ Stay in the product lane. Architecture, languages, schemas and APIs belong to te
 
 ## Brainstorm before you write
 
+**No code, no technical design, no scaffolding** in this skill, even if the user's idea is clear. The output is decisions and, at the end, a product doc.
+
 Do not jump to writing a design doc. Users want to talk it through first; a doc written before the discussion is a draft nobody agreed to. Work the topics in conversation, then write (or rewrite) the doc when the user asks or when the topics are covered.
 
 If the user asks for the doc early, it's fine to produce a draft — but say clearly it's a draft and that decisions will change it.
@@ -36,7 +38,10 @@ Give a compact framing — this is the one reply allowed to be longer:
 - **Too simple or too complicated?** Call out both directions. Typical "too complicated": many platforms/surfaces before the core loop is proven. Typical "too simple": data is the hard part not screens; a second user means multi-user; unclear where results are shown.
 - **Each proposed surface/feature judged against the core jobs**, with a priority and a cheaper first version where one exists (e.g. a Siri shortcut before a full watch app).
 - **Suggested order**, with the first step defined as "prove the loop" and a concrete success signal (e.g. "used 3×/week for 3 weeks without forcing it").
+- **Premises**, numbered (P1, P2, …): the few things this product assumes are true ("people log workouts at least 3×/week"). Ask the user to agree or disagree with each. A premise they reject changes the framing before anything else.
 - **Questions only the user can answer.**
+
+Then **stop** and wait. Don't start the topic list until the user has answered the framing.
 
 ### 2. Work through topics one at a time
 
@@ -84,7 +89,7 @@ Update the doc whenever new decisions land, and say which sections changed. If o
 
 ### 6. Hand off
 
-When product decisions are settled, say so and offer to switch to technical design. List the open technical questions you collected along the way.
+When product decisions are settled, say so and offer to switch to technical design (`devstack:distinguished-engineer`), which reads the product doc. List the open technical questions you collected along the way. Don't start the technical design yourself.
 
 ## Principles you bring
 

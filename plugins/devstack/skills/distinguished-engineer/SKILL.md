@@ -31,6 +31,19 @@ Your first reply should rework the draft (or the product doc) around a few core 
 
 Then answer any open questions from the product phase and ask your next 1–2.
 
+## Approaches before details
+
+For each big decision (the overall shape, the stack, the data model), give at least two approaches before going deep:
+
+| | Minimal | Fuller |
+|---|---|---|
+| What | the least that meets the product's core jobs | what you'd build with more time |
+| Effort | S / M / L | S / M / L |
+| Risk | the main way it fails | … |
+| Reuses | what already exists | … |
+
+Recommend one, say why in a line, and **stop until the user picks**. Name the data shape (core types, tables, IDs) before any logic. No implementation code in this skill: signatures and types only where the shape is the decision. When the design is agreed, hand off to `devstack:plan` (or straight to `devstack:orchestrate` for a large parallel build).
+
 ## Checklist to walk through
 
 Go roughly in this order, one item at a time, skipping what doesn't apply:
@@ -84,7 +97,7 @@ Present it as a table plus a simple dependency diagram.
 - Isolate every risky or immature dependency behind one small module.
 - Measure before optimising; design so the measurement exists from day one.
 - Choose the boring option unless the user has a reason (learning counts) — and say what that reason costs.
-- **When you own the whole stack, pick one convention and enforce it with a test.** Don't add defensive fallbacks. For example, every timestamp everywhere is RFC 3339 UTC with milliseconds (`YYYY-MM-DDTHH:MM:SS.mmmZ`), checked by a pattern in the contract and a server test, instead of parsers that accept three formats. The user put it as: "we don't need to be defensive for every case".
+- **When you own the whole stack, pick one convention and enforce it with a test.** Don't add defensive fallbacks. For example, every timestamp everywhere is RFC 3339 UTC with milliseconds (`YYYY-MM-DDTHH:MM:SS.mmmZ`), checked by a pattern in the contract and a server test, instead of parsers that accept three formats. Don't be defensive for every case you can imagine; enforce the one convention.
 - **Before proposing a library, check:** is it maintained, does it fit the platform (e.g. does it persist across app kills), and how many lines does it really save? Adding a dependency to save under ~100 lines of working code is usually a bad trade, so say so.
 - **Generated code is built, not committed.** Keep PRs human-readable; lockfiles stay committed.
-- **Scripts in a language the user can read.** This user finds bash hard to read, so write logic-heavy scripts (deploy, setup) in Python using only the standard library. Add type hints on every signature, frozen dataclasses and `pathlib`, with `mypy --strict` and `ruff` in CI. A one-line `run()` helper keeps the shell-command steps readable.
+- **Scripts in a language the user can read.** Ask which they read easily. Bash gets hard to follow past a few dozen lines, so a good default for logic-heavy scripts (deploy, setup) is standard-library Python with type hints, frozen dataclasses and `pathlib`, checked by `mypy --strict` and `ruff` in CI. A one-line `run()` helper keeps the shell-command steps readable.

@@ -1,67 +1,59 @@
 ---
 name: review
-description: Pre-ship self-review of the current app: typecheck, lint, build, then a short checklist for errors, secrets, env vars, SQLite path, blocking work and no-JS behavior. Fixes what it finds and reports what was skipped. Use before shipping, or when the user says /review.
+description: Pre-ship self-review of the current change in any repo — a trace table mapping every changed file to the part of the request it serves (reverting what serves none), the plan's "done when" check, the project's own typecheck, lint, test and build, then a short safety checklist (secrets, new dependencies, env vars). Fixes what it finds and reports what it skipped. Use before shipping, after devstack:build, or when the user says "review this", "is this ready", or /review.
 ---
 
 # Review
 
-A fast self-review before code leaves the machine. Fix problems directly; do not just
-list them. Stay frugal: read only changed files (`git diff --stat main...HEAD` and
-`git status`), not the whole repo.
+A fast check that the change does what was asked, only what was asked, and works. Read only what changed: `git status`, `git diff --stat <base>...HEAD` and the working tree, where `<base>` is the branch this one was cut from (usually `main`). For a deep bug hunt across the diff, suggest the built-in `/code-review` after this.
 
-## 1. Mechanical checks
+## 1. The goal
 
-Run what `package.json` defines, in this order, stopping to fix at the first failure:
+Take the goal and "done when" check from `docs/plan.md`, or from the user's request in this conversation. If neither exists, ask the user what the change is for before reviewing.
 
-1. `npm run typecheck` (or `npx tsc --noEmit` if the script is missing)
-2. `npm run lint`, if a lint script exists. Do not add a linter just for this.
-3. `npm run build`
+## 2. Trace table
 
-If a script does not exist, record it as skipped. Never silence an error with `any`,
-`@ts-ignore` or by disabling a rule, except with a one-line reason.
+One row per changed file (per hunk if a file mixes concerns):
 
-## 2. Checklist
+| File | Serves | Verdict |
+|---|---|---|
+| `src/db.ts` | "store the user's settings" | ✅ |
+| `src/utils.ts` | nothing: reformatting | ↩︎ reverted |
+| `README.md` | documents the new env var | ✅ |
 
-Check each against the changed files and fix what fails:
+- **Serves nothing, and you made it:** revert it.
+- **Serves nothing, and the user made it** (or you're unsure): leave it, and list it under "Needs you".
+- **Serves the goal but goes beyond it** (an extra option, an abstraction used once, a feature not asked for): simplify it to what the goal needs.
 
-- **Network calls.** Go through `fetchJson` (timeout, retries, no retry on 4xx except
-  429), check `res.ok`, and fail without crashing the page or job. Fan-out uses
-  `mapLimit`. No axios or p-limit.
-- **LLM.** Configured only by `LLM_BASE_URL`, `LLM_API_KEY` (or `HF_TOKEN`), `LLM_MODEL`.
-  The app still runs, degraded, with the LLM off.
-- **Secrets.** No keys, tokens or passwords in the repo or git history of this change.
-  Check with `git diff main...HEAD` and a grep for `key`, `token`, `secret`. `.env` is in
-  `.gitignore`.
-- **Env vars.** Every `process.env.X` in the code appears in `.env.example` with a
-  comment. Required ones fail fast with a clear message at startup.
-- **SQLite.** `node:sqlite` only, WAL mode, path from `<APP>_DB` (default
-  `data/<app>.db`, `/data/<app>.db` in Docker on the volume), never inside the image or
-  `.next`. Schema uses `CREATE TABLE IF NOT EXISTS`; one connection cached on
-  `globalThis`. Pages reading the DB export `dynamic = "force-dynamic"`.
-- **Request path.** Nothing slow or blocking runs in a request: no long loops, big
-  synchronous file work or polling. Background work is a scheduler job started from
-  `instrumentation.ts` (nodejs runtime only, once via a `globalThis` flag, disabled by
-  `<APP>_DISABLE=1`); each job catches its own errors, and its last status is on
-  `/api/health`.
-- **Works without JS.** Forms use real `<form>` with server actions, navigation uses
-  `<a>`, content renders in server components. The only client component is the small
-  `router.refresh()` interval one. Charts are inline SVG; no Tailwind, shadcn, chart
-  libs or animations.
-- **Dependencies.** Anything added this change was approved by the user. If not, flag it
-  and suggest the built-in alternative.
-- **Docker.** If the Dockerfile or `next.config.ts` changed, confirm `output:
-  "standalone"` is still set and the image still starts the server from `server.js`.
+## 3. Checks
 
-## 3. Report
+1. **The "done when" check.** Run it and show the output. Failing → the review is `blocked`, whatever else passes.
+2. **The project's own checks**, from whatever it defines (`package.json` scripts, `Makefile`, `cargo`, `pytest`, `swift test`, CI workflow): typecheck, lint, tests, build, in that order. Stop and fix at the first failure. Don't add tooling just to run it; record what doesn't exist as skipped.
+3. Never silence an error (`any`, `@ts-ignore`, disabling a rule, skipping a test) without a one-line reason in the code.
+
+## 4. Safety
+
+- **Secrets:** nothing that looks like a key, token, password or private URL in the diff (`git diff <base>...HEAD | grep -iE 'key|token|secret|password'`, then read the hits). `.env` files are git-ignored.
+- **Dependencies:** anything added was approved by the user. If not, flag it with the built-in alternative.
+- **Env vars:** every new one is documented (e.g. `.env.example`) and fails fast with a clear message if required.
+- **Personal data:** no real IPs, hostnames, emails or phone numbers in docs or tests; use placeholders.
+
+## 5. Stack checks (only for apps made with `devstack:scaffold`)
+
+Network calls go through `fetchJson` (timeout, retries, no retry on 4xx except 429); the app still runs with the LLM off; SQLite via `node:sqlite` in WAL mode at the `<APP>_DB` path, never inside the image; pages that read the DB export `dynamic = "force-dynamic"`; nothing slow runs in a request (background work is a scheduler job from `instrumentation.ts`); forms and links work without JS; `output: "standalone"` is still set if the Dockerfile or `next.config.ts` changed.
+
+## 6. Report
 
 Reply in this shape, nothing more:
 
 ```
 REVIEW: pass | fixed | blocked
-Ran: typecheck, lint, build
+Goal: <one line> — done when: <check> → passed | failed
+Trace: <n files, all traced | n reverted | n need you>  (table above)
+Ran: <checks>
 Fixed: <one line each, or "nothing">
-Skipped: <check and why, e.g. "docker build: Docker not running">
+Skipped: <check and why>
 Needs you: <decisions only the user can make, or "nothing">
 ```
 
-`blocked` means something fails that you could not fix. Say what and stop.
+`blocked` means something fails that you couldn't fix. Say what, and stop.

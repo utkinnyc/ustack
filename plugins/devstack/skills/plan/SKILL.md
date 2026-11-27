@@ -1,42 +1,55 @@
 ---
 name: plan
-description: Before coding a new app or feature, write a short design note to docs/plan.md and get the user's yes, then stop. Use when the user describes something to build, asks for a plan or design, or says /plan.
+description: Before building a feature, fix or change, write a short plan to docs/plan.md — the goal restated, the check that proves it's done, non-goals, and numbered steps that each say what part of the request they serve and how they're verified — then stop for the user's yes. No code. Use when the user describes something to build or change, asks for a plan, says "how would you do this", or says /plan.
 ---
 
 # Plan
 
-Think before building. The output is one short file the user can approve or correct in
-under a minute. Write no code in this skill.
+Turn a request into a plan the user can approve or correct in under a minute. Write no code in this skill.
 
-## Flow
+## 1. Look only as far as needed
 
-1. **Look only as far as needed.** If the repo exists, read `README.md`, `package.json`
-   and the files the request obviously touches. No exploratory sweeps. New app: read
-   nothing.
-2. **Write `docs/plan.md` once**, under 60 lines, with these sections:
-   - **Goal**: one or two sentences, what the user gets.
-   - **Non-goals**: what this deliberately will not do. Always list at least two.
-   - **Data flow**: request or job in, what is read or written (SQLite tables, external
-     calls), response out. A short bullet chain or ASCII sketch.
-   - **Files**: each file to create or change, one line each, with its purpose.
-   - **Open questions**: things only the user can answer. Each with your default, so a
-     plain "yes" settles it. Write "none" if there are none.
-3. **Apply the stack defaults** unless the user said otherwise, and say so rather than
-   asking: TypeScript, Next.js App Router, plain CSS, server components first, SQLite
-   via `node:sqlite` on the volume, background work from `instrumentation.ts`, single
-   Docker container.
-4. **Be conservative.** Prefer built-ins to dependencies. If the plan needs a new
-   dependency, list it under Open questions with the reason and the stdlib alternative.
-5. **Ask for approval.** Tell the user the path, summarize the plan in at most three
-   lines, list the open questions with defaults, and ask: "Yes to build, or what should
-   change?"
-6. **Stop.** Do not scaffold or code until the user says yes. On changes, edit
-   `docs/plan.md` in place and ask again. On a yes, hand off: new app means `scaffold`,
-   existing app means start building from the Files list.
+Read the README, the manifest (`package.json`, `Cargo.toml`, `pyproject.toml`, `Package.swift`, …) and the files the request obviously touches. Cite what you found as `path:line`. No exploratory sweeps. If `devstack:distinguished-engineer` already produced a design doc, plan from it.
 
-## Rules
+If the change is small (one file, obvious approach), skip the file: give a one-line plan and its check in chat, and hand to `devstack:build`.
 
-- One plan file, kept up to date. Do not create a second plan or a changelog.
-- Small scope wins. If the plan is over about a day of work, split it and plan the
-  first slice only; put the rest under Non-goals as "later".
-- Commit `docs/plan.md` with the first feature commit using `docs:` if it stands alone.
+## 2. Write `docs/plan.md`
+
+Under 60 lines. Overwrite the previous plan for a new piece of work; edit in place while iterating on this one.
+
+```markdown
+# <short title>
+
+**Goal:** <the request in one or two sentences, in the user's terms>
+**Done when:** <the check: a command, test or observable result>
+
+**Non-goals:** <at least two things this deliberately won't do>
+
+**Approach:** <one paragraph>. Considered: <the other approach and why not>.
+
+## Steps
+1. [ ] <one action> — serves: <part of the goal> — check: `<command or what to look at>`
+2. [ ] ...
+
+## Files
+- `path` — create | change — <why>
+
+## Open questions
+- <question> — default: <your pick, so a plain "yes" settles it>   (or "none")
+```
+
+Rules for steps:
+- **One action, one check each.** "Add the `users` table — check: `npm test -- users` passes." Not "handle edge cases".
+- **Every step serves part of the goal.** If a step serves none, cut it. Refactors and cleanups don't go in unless the goal needs them.
+- **Order so each check can run** when its step is done. Tests that prove the goal come early, not at the end.
+- **No code in the plan** beyond a signature or a type where the shape is the decision. A plan longer than the code it describes has written the code instead.
+- New dependencies go under Open questions, with the reason and the standard-library alternative.
+- More than about a day of work: plan the first slice only, and list the rest under Non-goals as "later".
+
+## 3. Ask, then stop
+
+Give the path, the goal and the "done when" in two lines, the open questions with defaults, and ask: **"Yes to build, or what should change?"**
+
+Stop. Don't scaffold or code until the user says yes. On changes, edit `docs/plan.md` and ask again.
+
+On a yes, hand off: `devstack:build` for one agent, `devstack:orchestrate` when the steps split into independent parts for parallel agents, `devstack:scaffold` first for a brand-new web app.

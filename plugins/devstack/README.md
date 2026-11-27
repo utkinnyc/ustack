@@ -61,7 +61,7 @@ and meant to be tuned over time.
 | `code-trace` | Follows one real input through the code: numbered, indented calls with file:line, a toy value at each step, database touches highlighted, failure cases; rendered as an HTML page. |
 | `selfhost` | Step-by-step VPS setup and deploys: SSH keys, ufw, Cloudflare DNS, Caddy, systemd. Never touches the server itself. |
 | `go-live` | First production deploy: a deploy kit where the server pulls CI releases with checksum, health check and rollback; web on the same host; device tokens; a step-by-step walkthrough. |
-| `apple-ship` | Gets iPhone/Watch/TV apps onto devices and TestFlight: developer account, signing explained, Developer Mode, bundle IDs, a scripted upload. |
+| `apple-ship` | Gets iPhone, iPad, Watch, TV and Mac apps onto devices and TestFlight: developer account, signing, bundle IDs, a configurable upload script for repeat releases, and fixes for common upload and install failures. |
 | `app-login` | Login design: Sign in with Apple on every device, Google, server-side token checks, linking accounts so both reach one user, App Store rules. |
 | `app-icons` | Draws app icons with a checked-in script and writes every asset catalog (iPhone, Watch, TV layers and Top Shelf). |
 | `transcripts-to-skills` | Reads your past Claude Code / T3Code sessions (only what's new since last run), finds repeated workflows and corrections, and turns them into skills in a PR. |

@@ -13,7 +13,12 @@
     {
       "name": "devstack",
       "source": "./plugins/devstack",
-      "description": "devstack: product and system design, parallel agent builds, self-hosting and production deploys, Apple app shipping, icons and login, learning, resumes, turning transcripts into skills, and small TypeScript web apps"
+      "description": "devstack: product and system design, parallel agent builds, self-hosting and production deploys, Apple app shipping, icons and login, learning, turning transcripts into skills, and small TypeScript web apps"
+    },
+    {
+      "name": "jobstack",
+      "source": "./plugins/jobstack",
+      "description": "jobstack: job-hunting skills — resumes as code, tailoring to a job description, and fit checks"
     }
   ]
 }

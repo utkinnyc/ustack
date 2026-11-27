@@ -1,0 +1,8 @@
+{
+  "name": "jobstack",
+  "version": "0.1.0",
+  "description": "jobstack: job-hunting skills — resumes as code, tailoring to a job description, and fit checks",
+  "author": {
+    "name": "Utkarsh Khandelwal"
+  }
+}

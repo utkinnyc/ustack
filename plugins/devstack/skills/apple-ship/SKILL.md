@@ -106,6 +106,14 @@ Release builds must point at a backend that's reachable from anywhere, not the M
 - **CI:** macOS runners on GitHub Actions cost about 10× Linux minutes. A cheap alternative is running `swift test` from the upload script's `PRECHECK`, so a failure stops the upload. Mention the trade-off; don't remove an existing macOS job without asking. If one fails with "package is using Swift tools version X but the installed version is Y", the runner's Xcode is older: move to a runner image with the right Xcode rather than lowering `swift-tools-version`.
 - **Offline data on Watch and iPhone** must persist to disk: the system kills apps often, and an in-memory queue loses data silently.
 
+## Sign in with Apple (when adding login)
+
+- Needs the paid account and the capability on **each** App ID, including the Watch's. The web needs a **Services ID** with a verified domain and return URL. These are portal steps the user does; list them.
+- Native on iPhone, iPad, Mac, Watch and TV (`AuthenticationServices`). Google has no Watch SDK, and on TV needs the device-code flow.
+- The token's `aud` differs per client: the Watch's can be its own bundle ID (`….watchkitapp`), the web's is the Services ID. The server must accept all of them.
+- **Hide My Email** gives a relay address (`…@privaterelay.appleid.com`), and Apple sends the email only on the **first** sign-in. Don't key users on email; store the `sub`.
+- **Apple refuses `localhost` return URLs.** For local web or CLI login, point a `dev.<domain>` return URL at `127.0.0.1` in `/etc/hosts` and serve it with a `mkcert` certificate, or use a tunnel. The iOS Simulator signs in fine against a local server.
+
 ## Publishing to the App Store (when asked)
 
 A backend that's always up, with a demo account for the reviewer; real sign-in rather than pasted tokens; if the app offers third-party login (e.g. Google), it must also offer **Sign in with Apple**; if it creates accounts, **in-app account deletion**; a privacy policy URL and the App Privacy answers; any category rules that apply (health data, kids, payments through in-app purchase); screenshots for each device size, icons and a support URL. Expect at least one rejection the first time; the rejection message says what to fix.

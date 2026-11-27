@@ -15,7 +15,6 @@ and meant to be tuned over time.
 /devstack:go-live                # first production deploy: VPS backend, web, TestFlight
 /devstack:apple-ship             # signing, devices, TestFlight, App Store
 /devstack:app-icons              # generate app icons from a script, every platform
-/devstack:app-login              # Sign in with Apple / Google, account linking
 /devstack:resume                 # Typst resume + tailoring to a job description
 /devstack:transcripts-to-skills  # mine past sessions for new or better skills
 /devstack:plan      # design note in docs/plan.md, then wait for a yes
@@ -62,7 +61,6 @@ and meant to be tuned over time.
 | `selfhost` | Step-by-step VPS setup and deploys: SSH keys, ufw, Cloudflare DNS, Caddy, systemd. Never touches the server itself. |
 | `go-live` | First production deploy: a deploy kit where the server pulls CI releases with checksum, health check and rollback; web on the same host; device tokens; a step-by-step walkthrough. |
 | `apple-ship` | Gets iPhone, iPad, Watch, TV and Mac apps onto devices and TestFlight: developer account, signing, bundle IDs, a configurable upload script for repeat releases, and fixes for common upload and install failures. |
-| `app-login` | Login design: Sign in with Apple on every device, Google, server-side token checks, linking accounts so both reach one user, App Store rules. |
 | `app-icons` | Draws app icons with a checked-in script and writes every asset catalog (iPhone, Watch, TV layers and Top Shelf). |
 | `transcripts-to-skills` | Reads your past Claude Code / T3Code sessions (only what's new since last run), finds repeated workflows and corrections, and turns them into skills in a PR. |
 | `resume` | Resume as Typst code: measured one-page layout, crisp honest bullets, tailoring and fit checks against a job description. |

@@ -69,7 +69,13 @@ This also removes Xcode's "Trust & Enable" plugin prompt.
 - **A shared Swift package** (`<App>Kit`, "Kit" being Apple's naming convention for libraries) holds everything except screens: the API client wrapper (one function per endpoint), request middleware (token, typed errors), the Keychain token store, the offline queue, and one shared sign-in button. Each app only draws screens.
 - **Share logic, not UI.** Watch, TV and phone screens differ on purpose. Shared views fill up with `#if os(watchOS)`.
 - **Web can't share Swift.** Share the OpenAPI contract, plus a `contract/fixtures/` folder of JSON cases that both the Swift and web tests read, to catch the clients drifting apart. A Rust core (UniFFI for Apple, wasm-bindgen for the web) only pays off once real domain logic is duplicated, not for ~60 lines.
-- **A web app that looks native:** a CSS-only change. Use `-apple-system, system-ui` fonts, Apple's system colours as CSS variables with a dark variant, and inset grouped lists. Use Lucide for icons, because SF Symbols' licence doesn't cover the web. If the app gets a brand later, keep one `tokens.json` that generates the CSS variables and a Swift `Theme`.
+- **A web app that looks native:** write ~200 lines of hand-written CSS that copy Apple's system look:
+  - `-apple-system, system-ui` fonts, and Apple's published system colours as CSS variables with a dark variant;
+  - inset grouped lists, large titles, and a tab bar (bottom on phones, top on wide screens);
+  - about 8 small inline SVG icons, because SF Symbols' licence doesn't cover the web.
+
+  The UI libraries don't fit here: Konsta UI needs Tailwind, Ionic adds ~245 KB, and Framework7 brings its own router; the rest are small Liquid Glass experiments. Don't generate Swift colours from a shared token file either. The Apple apps should keep using system colours, which adapt to accessibility settings. Before matching the web to the apps, list where the Apple apps disagree with each other (icons, status colours, duration format, error style) and let the user pick one of each.
+- **Web size:** a React SPA is ~75 KB compressed, mostly React itself. Swapping in Preact (`preact/compat`) takes it to ~15 KB. Add cache headers in Caddy for hashed assets. Code-splitting and replacing the typed fetch client save little.
 - **Offline queues must persist to disk.** watchOS and iOS kill apps all the time. An in-memory queue library (e.g. Queuer) loses logs silently.
 
 ## Dev loop on the Mac

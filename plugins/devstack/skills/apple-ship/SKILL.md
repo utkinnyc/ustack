@@ -34,8 +34,24 @@ If you can run commands on the Mac, check device state yourself (`xcrun devicect
 ## Bundle IDs and names
 
 - Three kinds of name: the **bundle ID** (hidden, permanent, unique across Apple), the **display name** (under the icon, needn't be unique), and the **App Store Connect name** (unique across the store, max 30 characters).
-- Convention: reverse domain, `com.<prefix>.<app>`, with `.watchkitapp` for the Watch and a suffix like `.tv` for TV. Prefer a prefix matching a domain the user owns.
-- **Settle the prefix before the first upload.** It can be changed freely until then; afterwards it's locked to that App Store Connect entry.
+- Convention: reverse domain, `com.<prefix>.<app>`. Prefer a prefix matching a domain the user owns. **Settle it before the first upload**; afterwards it's locked to that App Store Connect record.
+
+## One app on every device (the default)
+
+Ship **one App Store record** for all platforms (Apple calls it Universal Purchase), and keep adding platforms (iPad, Mac) to it later:
+
+| Device | How it fits |
+|---|---|
+| iPhone | The main app, `com.<prefix>.<app>` |
+| Watch | **Embedded in the iPhone app**, `com.<prefix>.<app>.watchkitapp`. It can still run and talk to the server on its own. Installing on the phone offers it on the watch. |
+| TV | A separate build with the **same bundle ID** as the iPhone app; the record gets a tvOS platform (App Store Connect → the app → **+** next to "iOS App" → tvOS) |
+| Mac / iPad | Same bundle ID, added as platforms |
+
+This means one TestFlight page, one tester group and one name. Separate records (a standalone watch-only app in an empty iPhone wrapper, or a TV app under `.tv`) multiply the setup, and records that have had builds can't be deleted.
+
+**Ask before deviating.** Any choice that changes the app's shape (separate records, standalone Watch app, separate bundle IDs) goes to the user as options with trade-offs *before* you do it. Don't pick a workaround silently because something failed to build.
+
+**The usual reason a Watch app gets split out:** a shared Swift package that generates code at build time (e.g. the OpenAPI generator plugin) is built twice, for iPhone and Watch, in one build, and Xcode fails with *"Multiple commands produce …/Types.swift"*. Fix the cause: run the generator as a script when the contract changes, commit its output, and add a CI check that fails if the committed code is stale. That also removes Xcode's "Trust & Enable" plugin prompt.
 
 ## Dev loop on the Mac
 
@@ -57,14 +73,30 @@ Development profiles list each device, registered by connecting or pairing it wi
 
 **Before the first upload:** every target needs an app icon, and the TV also needs a Top Shelf image (see `devstack:app-icons`). Set `ITSAppUsesNonExemptEncryption = NO` if the app only uses standard HTTPS, so uploads don't ask about encryption. If the HealthKit entitlement is present, the upload needs **both** `NSHealthShareUsageDescription` and `NSHealthUpdateUsageDescription`, even for a read-only app.
 
-1. **App records (user, App Store Connect → Apps → + → New App):** one per bundle ID, given as a table (platform, name, bundle ID, SKU). A watch-only app is created under **iOS**. Names must be unique across the store; if one is taken, add a suffix. If a bundle ID is missing from the dropdown, do one archive with `-allowProvisioningUpdates` to register it, then refresh.
+1. **App record (user, App Store Connect → Apps → + → New App):** one record (platform, name, bundle ID, SKU, given as a table), then add tvOS to it if there's a TV app. Names must be unique across the store; if one is taken, add a suffix. If the bundle ID is missing from the dropdown, do one archive with `-allowProvisioningUpdates` to register it, then refresh.
 2. **Upload (you, from a script):** offer `scripts/testflight.sh [schemes…]` (see `references/testflight.sh`). It regenerates the project, archives each scheme in Release with a **timestamp build number** (Apple rejects repeats), and exports with `method app-store-connect`, `destination upload`. Traps:
    - **TV with no registered Apple TV:** archive with `CODE_SIGNING_ALLOWED=NO`, and let the export sign it for distribution. An unsigned archive carries no team, so put `teamID` in the export options, read from the project rather than hard-coded.
-   - **Watch archive missing the app:** check the `.xcarchive` actually contains `Products/Applications/*.app`. A watch-only target may need `SKIP_INSTALL: NO` (or the right install path) in Release.
+   - **Check the archive:** the iPhone `.xcarchive` must contain `Products/Applications/*.app` with the Watch app under `Watch/` inside it. Run the export locally before uploading.
    - Filter `xcodebuild` noise in the output (`grep -E "==>|Upload (succeeded|failed)|error:"`).
    Processing takes 10–30 min.
-3. **Testers (user, per app):** TestFlight tab → Internal Testing → + → a group with their Apple ID → add the build. No review needed.
-4. **Install:** the TestFlight app on iPhone and TV (same Apple ID). The Watch app installs from TestFlight on the phone, or the watch's own TestFlight app. Updates arrive automatically with each upload.
+3. **Testers (user, once per record):** TestFlight tab → **+** next to Internal Testing → a group (e.g. "Me") with automatic distribution on → add themselves and the build. No review needed.
+4. **Install:** the TestFlight app on iPhone and TV (same Apple ID). The Watch app comes with the iPhone app (or from the iPhone's Watch app → Available Apps, or TestFlight on the watch). Later uploads arrive automatically.
+
+**Reading App Store Connect:**
+
+| What they see | Meaning |
+|---|---|
+| "1.0 Prepare for Submission" | The public App Store page. Ignore it for TestFlight. |
+| Processing | Apple is checking the upload (10–30 min); an email follows |
+| Missing Compliance | The encryption question: answer **None of the algorithms mentioned above** (standard HTTPS/Keychain only), then add `ITSAppUsesNonExemptEncryption = NO` to that target so it doesn't come back |
+| Ready to Submit / Ready to Test | Ready. "Submit" refers to external testers only; internal testers can install now |
+| Invalid | Rejected; the email says why |
+
+**App not offered on a device:** TestFlight shows "uses watchOS X" (or similar) when the device's OS is older than the target's minimum. Check the device's version first, and ask whether to lower the deployment target only if the code builds against the older SDK. After an OS update, force-quit TestFlight; it caches the device version.
+
+**Order matters for the TV:** add the tvOS platform to the record *before* uploading the TV build, or it may never show up (re-upload if it doesn't appear within ~30 min). When moving from separate records to one, the Watch and TV apps count as new apps on the devices: delete the old ones and sign in again.
+
+Apple builds don't happen automatically on merge (only the backend does, through CI). Say so, and run the upload script after merges unless CI uploads have been set up.
 
 Release builds must point at a reachable backend (e.g. the VPS), not the Mac, or they only work at home. Then each app needs its device token in Settings (see `devstack:go-live`).
 

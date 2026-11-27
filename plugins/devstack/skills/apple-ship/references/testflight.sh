@@ -2,12 +2,12 @@
 # Archive the apps and upload them to TestFlight. Run from the folder with project.yml:
 #   scripts/testflight.sh                 # all schemes
 #   scripts/testflight.sh App AppTV       # just these
-# Needs: Xcode signed in to the paid team, and an App Store Connect record per bundle ID.
+# Needs: Xcode signed in to the paid team, and the App Store Connect record (with tvOS added).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 PROJECT=App.xcodeproj                      # <- your project
-ALL=(App AppWatch AppTV)                   # <- your schemes
+ALL=(App AppTV)                            # <- your schemes (the Watch app is embedded in App)
 TEAM_ID="$(grep -m1 -E '^\s*DEVELOPMENT_TEAM:' project.yml | awk '{print $2}')"
 
 if (($#)); then schemes=("$@"); else schemes=("${ALL[@]}"); fi
@@ -29,7 +29,6 @@ xcodegen -q
 for s in "${schemes[@]}"; do
   case "$s" in
     App)      platform=iOS;     sign=() ;;
-    AppWatch) platform=watchOS; sign=() ;;
     # No Apple TV registered for development signing: archive unsigned; export signs for App Store.
     AppTV)    platform=tvOS;    sign=(CODE_SIGNING_ALLOWED=NO) ;;
     *) echo "unknown scheme $s" >&2; exit 1 ;;
@@ -41,6 +40,8 @@ for s in "${schemes[@]}"; do
     -allowProvisioningUpdates -skipPackagePluginValidation -skipMacroValidation -quiet
   ls "$out/$s.xcarchive/Products/Applications/"*.app >/dev/null \
     || { echo "archive for $s has no app (check SKIP_INSTALL)" >&2; exit 1; }
+  [[ $s != App ]] || ls -d "$out/$s.xcarchive/Products/Applications/"*.app/Watch/*.app >/dev/null \
+    || { echo "iPhone archive has no embedded Watch app" >&2; exit 1; }
   xcodebuild -exportArchive -archivePath "$out/$s.xcarchive" \
     -exportOptionsPlist "$out/export.plist" -exportPath "$out/$s" -allowProvisioningUpdates
 done

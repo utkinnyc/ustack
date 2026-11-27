@@ -40,6 +40,14 @@ When asked to understand a repo or "see the flow", give, in this order:
 4. **Reading order with a skip list.** The user will balk at "6,200 lines". Show that only a fraction matters: a numbered list of the ~5–8 files worth reading (with line counts and why), and a table of what to skip (fakes, generated code, plain struct definitions, config parsing).
 5. **Tests:** where they live and the language's convention (e.g. Rust's `#[cfg(test)] mod tests` at the bottom of the same file).
 
+## Codebase guide in the repo (when asked to "document the codebase" or "explain each part and put it in docs")
+
+1. On a new branch, split the repo by area (e.g. backend, apps, web, contract + CLI, deploy + CI) and launch **one read-only subagent per area in parallel**. Each writes one file, `docs/codebase/<area>.md`: purpose, layout with line counts, how it starts, one request traced through it with `path:line`, at least one Mermaid flowchart or sequence diagram, tests, and its sharpest findings.
+2. Report progress as each finishes ("4 of 5 done").
+3. Write `docs/codebase/README.md` yourself: the whole-system diagram, the main user flow end to end, how a change gets from PR to production, links to each area file, and the top findings.
+4. **Render every Mermaid block** (e.g. `npx -y @mermaid-js/mermaid-cli -i x.mmd -o x.svg`) and fix any that fail to parse.
+5. Scan for secrets and real IPs or emails, commit only the doc files (check `git status` if another session shares the checkout), and open a PR. Summarise the system in chat in a few paragraphs, with the C++/Python/TypeScript analogies.
+
 ## Walkthroughs
 
 - **"Explain each line":** a table of line → meaning, grouped by block. Explain syntax once, then move on.

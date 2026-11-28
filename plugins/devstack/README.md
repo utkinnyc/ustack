@@ -9,7 +9,7 @@ Resume help is in [jobstack](../jobstack/); logos and app icons are in
 ## The rules (always on)
 
 [rules/RULES.md](rules/RULES.md) is loaded into every session (and after `/clear` or
-compaction) by a `SessionStart` hook:
+compaction) by a `SessionStart` hook, and into every subagent by a `SubagentStart` hook:
 
 1. **Restate the goal** and the smallest change that meets it.
 2. **Turn the goal into a check**; done means the check passed.
@@ -20,6 +20,7 @@ compaction) by a `SessionStart` hook:
 7. **Prove it**: show the command and output; label claims verified, inferred or guess.
 8. **Be brief and plain**; use tables and diagrams where they read faster.
 9. **Ask before anything hard to undo or outward-facing.**
+10. **Hand wide work to subagents**, and check what they return.
 
 Your own instructions always win over these.
 
@@ -33,6 +34,8 @@ flowchart LR
   P -->|docs/plan.md| O[orchestrate]
   B -->|diff| R[review]
   O -->|diff| R
+  V[verify] -.->|control CLI| B
+  V -.->|control CLI| R
   R --> S[ship]
   S -->|PR merged| D[selfhost / go-live / apple-ship]
 ```
@@ -56,6 +59,7 @@ On the side: `debug`, `challenge`, `explain`, `code-trace` (thinking), `lean`, `
 
 | Skill | What it does |
 |---|---|
+| `verify` | Sets up a control CLI (reusing the app's own) and a Feature Map so agents can drive the real app (backend, CLI, web, iOS/watchOS/tvOS, Android) and prove changes work; keeps both current. |
 | `build` | Carries out the approved plan one step at a time: change, run the step's check, tick it off. Stops when the work would go beyond the plan. |
 | `orchestrate` | Runs a big plan as one foundation step plus parallel agents in git worktrees, then merges in dependency order and passes an end-to-end smoke test. |
 | `lean` | Makes a codebase small enough for one developer to read: measures lines, deletes unused code and fakes, uses the framework's own pieces, one test per behaviour, one-line comments, file-by-file trimming sessions. |

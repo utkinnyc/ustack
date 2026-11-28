@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: Run a large build as one serial foundation step plus many subagents working in parallel git worktrees, then merge everything back in dependency order and prove it with an end-to-end smoke test. Covers splitting the plan into workstreams, an AGENTS.md ownership map, launching and monitoring background agents, resuming after usage limits, pre-push secret checks, a notes file for the author, merge sequencing, integration, read-only review agents, and worktree cleanup. Use this whenever the user says "use subagents", "run these in parallel", "execute the plan", "step 0 then N agents", "orchestrate", "merge these branches", "what order should I merge", or hands over an implementation plan with many independent parts.
+description: Run a large plan as one serial foundation step plus parallel agents in git worktrees, then merge in dependency order and prove it with an end-to-end smoke test. Covers workstream ownership, monitoring background agents, secret checks before push, merge order and worktree cleanup. Use when the user says "run these in parallel", "execute the plan with agents", "orchestrate", "what order should I merge", or hands over a plan with many independent parts.
 ---
 
 # Orchestrate

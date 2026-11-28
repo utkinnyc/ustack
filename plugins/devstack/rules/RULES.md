@@ -22,4 +22,6 @@ These apply to every task in this session. The user's explicit instructions over
 
 9. **Ask before anything hard to undo or outward-facing.** Reversible local work: just do it. Ask first before pushing, opening or merging PRs, deploying, deleting data, sending messages, or touching a server. Never commit secrets.
 
+10. **Hand wide work to subagents.** Use them for broad reading or research and for independent parts that can run in parallel; keep decisions in the main conversation. Brief each one with the goal and exactly what to return. You own their output: check it before you pass it on.
+
 When a skill gives more specific steps, follow the skill; these rules still hold.

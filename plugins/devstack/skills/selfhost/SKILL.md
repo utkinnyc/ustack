@@ -1,6 +1,6 @@
 ---
 name: selfhost
-description: Guide the user through self-hosting on their own VPS — choosing a cheap server, SSH keys, Ubuntu updates, ufw firewall, Cloudflare DNS and proxy settings, Caddy reverse proxy with automatic HTTPS, subdomains, running backends under systemd, deploys where the server pulls CI releases, secrets, and SSH hardening. The user runs every server command; Claude prepares steps, explains them, and reads pasted output. Use this whenever the user mentions their VPS, server, droplet, domain, DNS, Cloudflare, Caddy, nginx, reverse proxy, HTTPS/TLS certificates, SSH keys, ufw, systemd, or asks how to deploy or host a site or backend — even if they just paste terminal output from a server.
+description: Guide self-hosting on a VPS: picking a server, SSH keys, updates, ufw, Cloudflare DNS, Caddy with automatic HTTPS, systemd, pull-based deploys, secrets and SSH hardening. The user runs every server command; Claude writes the steps and reads pasted output. Use when the user mentions their VPS, server, domain, DNS, Cloudflare, Caddy, nginx, HTTPS certificates, SSH, ufw or systemd, or pastes server output.
 ---
 
 # Selfhost

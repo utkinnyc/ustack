@@ -1,6 +1,6 @@
 ---
 name: transcripts-to-skills
-description: Mine the user's past Claude Code conversations (and T3Code threads) for repeated workflows, hard-won fixes, and preferences, then turn them into new skills or improvements to existing ones in their plugin marketplace, delivered as a PR. Tracks what has already been processed so each run only reads what's new. Use this whenever the user says "go through my transcripts", "make skills out of what I did", "process transcripts into skills", "do you see more transcripts now", "what skills could we make from my sessions", or asks to turn a conversation, session or workflow into a skill or plugin.
+description: Mine the user's past Claude Code sessions (only what's new since the last run) for repeated workflows, corrections and hard-won fixes, and turn them into new or improved skills in their plugin marketplace, delivered as a PR. Use when the user says "go through my transcripts", "make skills out of what I did", "what skills could we make from my sessions", or asks to turn a session or workflow into a skill.
 ---
 
 # Transcripts to skills

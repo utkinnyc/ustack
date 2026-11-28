@@ -1,6 +1,6 @@
 ---
 name: go-live
-description: Take a working app to production for the first time — backend on a VPS, web dashboard on the same host, mobile apps on TestFlight — and set it up so later releases ship by merging to main. Covers the repo-side deploy kit (idempotent setup script, env templates, a pull-based deploy script with checksum, health check and automatic rollback, hardened systemd units, Caddy serving API and SPA on one host, continuous database backups), the guided walkthrough split by who does what and where, secrets, per-device tokens, and the failures seen on first deploys. Use this whenever the user says "deploy everything", "put it in production", "go live", "ship it to my server", "give me steps to deploy the backend/web/apps", or asks how releases reach the server.
+description: Take a working app to production for the first time and leave merge-to-main = deploy: a repo-side deploy kit (idempotent setup, pull-based deploy with checksum, health check and rollback, hardened systemd, Caddy, database backups) plus a step-by-step walkthrough the user runs. Use when the user says "go live", "deploy everything", "put it in production", "ship it to my server", or asks how releases reach the server.
 ---
 
 # Go live

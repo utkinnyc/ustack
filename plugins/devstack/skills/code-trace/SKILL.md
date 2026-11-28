@@ -1,6 +1,6 @@
 ---
 name: code-trace
-description: Trace one concrete input — a CLI command, an HTTP request, a button tap, a job — through the real code, step by step, showing which function runs, where it lives (file:line), what value it holds at that moment (with a small made-up example), and where it touches the database, disk or network; rendered as a numbered, indented call trace (HTML when possible) with failure branches and the final output. Also draws "today vs proposed" flows that mark which boxes are new code. Use this whenever the user says "trace", "draw the trace", "walk me through what happens when I run X", "what happens when the app calls Y", "follow this request through the code", "use a toy example with our code", "where does this go after main.rs", or says they're lost in a flow and want it step by step.
+description: Trace one real input (a CLI command, HTTP request, button tap or job) through the code step by step: which function runs, its file:line, the value at each step with a toy example, and where it touches the database, disk or network. Rendered as a numbered call trace, HTML when possible. Use when the user says "trace", "walk me through what happens when I run X", "follow this request", or is lost in a flow.
 ---
 
 # Code trace

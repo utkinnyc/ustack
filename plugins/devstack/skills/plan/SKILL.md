@@ -39,6 +39,7 @@ Under 60 lines. Overwrite the previous plan for a new piece of work; edit in pla
 ```
 
 Rules for steps:
+- **Checks use the app when they can.** If the repo has `.claude/skills/verify-*` (from `devstack:verify`), write checks as its control commands.
 - **One action, one check each.** "Add the `users` table — check: `npm test -- users` passes." Not "handle edge cases".
 - **Every step serves part of the goal.** If a step serves none, cut it. Refactors and cleanups don't go in unless the goal needs them.
 - **Order so each check can run** when its step is done. Tests that prove the goal come early, not at the end.

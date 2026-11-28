@@ -16,7 +16,7 @@ Turn an approved plan into a working change, with proof at every step. For many 
 ## Each step
 
 1. **Make the change the step names**, and nothing else. Match the surrounding code's style. No drive-by renames, reformatting or refactors.
-2. **Run the step's check** and show the command and the relevant lines of output.
+2. **Run the step's check** and show the command and the relevant lines of output. If the repo has `.claude/skills/verify-*`, drive the real app through it; for UI changes, include a screenshot.
 3. **Pass:** tick the step in `docs/plan.md` (`[x]`) and continue.
 4. **Fail:** find the root cause before changing anything (see `devstack:debug`). Don't stack fixes. If two fixes fail for the same reason, stop and tell the user what assumption looks wrong.
 

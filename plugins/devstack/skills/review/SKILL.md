@@ -27,7 +27,7 @@ One row per changed file (per hunk if a file mixes concerns):
 
 ## 3. Checks
 
-1. **The "done when" check.** Run it and show the output. Failing → the review is `blocked`, whatever else passes.
+1. **The "done when" check.** Run it and show the output; use the app's control CLI if the repo has `.claude/skills/verify-*`. Failing → the review is `blocked`, whatever else passes. A user-facing change with no way to check it in the app → suggest `devstack:verify`.
 2. **The project's own checks**, from whatever it defines (`package.json` scripts, `Makefile`, `cargo`, `pytest`, `swift test`, CI workflow): typecheck, lint, tests, build, in that order. Stop and fix at the first failure. Don't add tooling just to run it; record what doesn't exist as skipped.
 3. Never silence an error (`any`, `@ts-ignore`, disabling a rule, skipping a test) without a one-line reason in the code.
 

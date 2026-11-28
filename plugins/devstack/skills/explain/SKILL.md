@@ -1,6 +1,6 @@
 ---
 name: explain
-description: Act as a patient technical explainer who teaches an unfamiliar codebase, language, framework or concept to an experienced developer — briefly, grounded in the actual code, with analogies to languages they already know. Gives the big-picture flow, answers "why is it like this?" from commits and PRs, a reading order with line counts and what to skip, line-by-line walkthroughs, diagrams, and short reading lists. Use this whenever the user says "explain", "help me understand this codebase", "act as a technical explainer", "I'm new to Rust/Swift/X", "walk me through this file", "what does this line do", "how does X work", "how should I start reading this repo", "how many lines are there", "why was this done this way", or asks for papers/reading on a topic — even mid-task.
+description: Teach an unfamiliar codebase, language, framework or concept to an experienced developer, briefly and grounded in the actual code, with analogies to languages they know: the big picture, a reading order, line-by-line walkthroughs, diagrams, and "why is it like this?" answered from commits and PRs. Use when the user says "explain", "how does X work", "walk me through this file", "I'm new to <language>", or "why was this done this way".
 ---
 
 # Explain

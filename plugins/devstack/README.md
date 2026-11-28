@@ -34,6 +34,8 @@ flowchart LR
   P -->|docs/plan.md| O[orchestrate]
   B -->|diff| R[review]
   O -->|diff| R
+  V[verify] -.->|control CLI| B
+  V -.->|control CLI| R
   R --> S[ship]
   S -->|PR merged| D[selfhost / go-live / apple-ship]
 ```
@@ -57,6 +59,7 @@ On the side: `debug`, `challenge`, `explain`, `code-trace` (thinking), `lean`, `
 
 | Skill | What it does |
 |---|---|
+| `verify` | Sets up a control CLI (reusing the app's own) and a Feature Map so agents can drive the real app (backend, CLI, web, iOS/watchOS/tvOS, Android) and prove changes work; keeps both current. |
 | `build` | Carries out the approved plan one step at a time: change, run the step's check, tick it off. Stops when the work would go beyond the plan. |
 | `orchestrate` | Runs a big plan as one foundation step plus parallel agents in git worktrees, then merges in dependency order and passes an end-to-end smoke test. |
 | `lean` | Makes a codebase small enough for one developer to read: measures lines, deletes unused code and fakes, uses the framework's own pieces, one test per behaviour, one-line comments, file-by-file trimming sessions. |

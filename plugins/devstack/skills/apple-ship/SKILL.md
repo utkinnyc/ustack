@@ -1,6 +1,6 @@
 ---
 name: apple-ship
-description: Get iPhone, iPad, Apple Watch, Apple TV and Mac apps onto real devices and out through TestFlight and the App Store — developer account, signing and provisioning, Developer Mode, bundle IDs, a scripted TestFlight upload, reading App Store Connect, and fixing upload and install failures. Use when the user wants to install an app on their device, upload or release to TestFlight, asks about Xcode signing, bundle IDs, App Store Connect or publishing, or pastes an Xcode archive, export or upload error.
+description: Get iPhone, iPad, Apple Watch, Apple TV and Mac apps onto devices and out through TestFlight and the App Store: developer account, signing, Developer Mode, bundle IDs, a scripted TestFlight upload, App Store Connect, and upload or install failures. Use when the user wants to install on a device, release to TestFlight, asks about Xcode signing, bundle IDs or publishing, or pastes an Xcode archive or upload error.
 ---
 
 # Apple Ship

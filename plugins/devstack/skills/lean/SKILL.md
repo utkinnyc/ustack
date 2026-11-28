@@ -1,11 +1,11 @@
 ---
 name: lean
-description: Make a codebase small enough for one developer to read — measure where the lines are, describe each module with read-only subagents, then cut in reviewable PRs: delete unused code and dead crates, collapse crates into modules, replace hand-written plumbing with the framework's own pieces, cut duplicate tests to one per behaviour, and trim comments to one crisp line where something isn't obvious. Also runs file-by-file "let's look at X" sessions where the user reads along and decides what to trim. Use this whenever the user says the code is too big, "too many lines", "too many tests", "too many comments", "is this even needed", "can we delete this", "simplify this folder", "make it lean", "isn't the framework already doing this", or wants to go through a crate or folder file by file.
+description: Make a codebase small enough for one developer to read: measure where the lines are, then cut in reviewable PRs (unused code, extra crates or packages, hand-written plumbing the framework already provides, duplicate tests, wordy comments). Also runs file-by-file trimming sessions. Use when the user says the code is too big, "too many lines/tests/comments", "can we delete this", "make it lean", or wants to go through a folder file by file.
 ---
 
 # Lean
 
-The user is **one developer**, so every line is a line they have to read: "I can't read 30K lines of code as a hobby." Optimise for a codebase a single person can hold in their head, not for team-scale process.
+Every line is a line someone has to read. For a solo developer or a small team, optimise for a codebase one person can hold in their head, not for team-scale process.
 
 ## 1. Measure, then describe (read-only)
 
